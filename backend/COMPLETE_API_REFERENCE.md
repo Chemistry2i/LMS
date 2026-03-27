@@ -1,21 +1,21 @@
-# 🔌 COMPLETE API REFERENCE - 32 ENDPOINTS
+# 🔌 COMPLETE API REFERENCE - 38 ENDPOINTS (Phase 1 Complete)
 
 ## Quick Reference
 
 | Module | Public | Protected | Admin | Total |
 |--------|--------|-----------|-------|-------|
-| **Auth** | 2 | 1 | - | 3 |
+| **Auth** | 5 | 4 | - | 9 |
 | **Books** | 3 | 3 | - | 6 |
-| **Borrowing** | 0 | 4 | - | 4 |
+| **Borrowing** | 0 | 6 | - | 6 |
 | **Users** | 0 | 2 | 2 | 4 |
 | **Categories** | 2 | 2 | 1 | 5 |
 | **Reservations** | 0 | 4 | 3 | 7 |
 | **Dashboard** | 0 | 0 | 8 | 8 |
-| **Total** | **7** | **16** | **14** | **32** |
+| **Total** | **10** | **21** | **14** | **38** |
 
 ---
 
-## 📚 AUTHENTICATION (3 Endpoints)
+## 📚 AUTHENTICATION (9 Endpoints)
 
 ### Register
 ```
@@ -48,6 +48,65 @@ GET /api/auth/me
 Status: PROTECTED
 Headers: Authorization: Bearer TOKEN
 Response: 200 { userId, username, email, role }
+```
+
+### Logout
+```
+POST /api/auth/logout
+Status: PROTECTED
+Headers: Authorization: Bearer TOKEN
+Response: 200 { success: true }
+Effect: Token added to blacklist, cannot be reused
+```
+
+### Change Password
+```
+POST /api/auth/change-password
+Status: PROTECTED
+Headers: Authorization: Bearer TOKEN
+Body: {
+  "currentPassword": "password123",
+  "newPassword": "newpassword456",
+  "confirmPassword": "newpassword456"
+}
+Response: 200 { success: true, message: "Password changed successfully" }
+```
+
+### Forgot Password
+```
+POST /api/auth/forgot-password
+Status: PUBLIC
+Body: { "email": "john@example.com" }
+Response: 200 { 
+  success: true,
+  data: { testToken: "..." }
+}
+Note: In production, sends reset link via email. testToken is for testing.
+```
+
+### Reset Password
+```
+POST /api/auth/reset-password
+Status: PUBLIC
+Body: {
+  "token": "reset_token_from_email",
+  "newPassword": "resetpassword789",
+  "confirmPassword": "resetpassword789"
+}
+Response: 200 { success: true, message: "Password reset successfully" }
+Requirement: Token must be valid (expires in 1 hour)
+```
+
+### Refresh Token
+```
+POST /api/auth/refresh
+Status: PUBLIC
+Headers: Authorization: Bearer CURRENT_TOKEN
+Response: 200 { 
+  success: true,
+  data: { token: "new_token", expiresIn: 604800 }
+}
+Requirement: Current token must not be blacklisted
 ```
 
 ---
@@ -105,7 +164,7 @@ Response: 200 { success }
 
 ---
 
-## 📤 BORROWING (4 Endpoints)
+## 📤 BORROWING (6 Endpoints)
 
 ### Checkout Book
 ```
@@ -135,6 +194,45 @@ Response: 200 PAGINATED [books...]
 GET /api/borrowing/history?page=1&limit=10
 Status: PROTECTED
 Response: 200 PAGINATED [history...]
+```
+
+### Renew Book
+```
+POST /api/borrowing/renew
+Status: PROTECTED
+Body: { "borrowId": 1 }
+Response: 200 { 
+  success: true,
+  data: { newDueDate: "2024-04-10T00:00:00Z" }
+}
+Constraints:
+  - Max 2 renewals per book per user
+  - Cannot renew if book is overdue
+  - Cannot renew if book has pending reservations
+  - Extends due date by 14 days
+```
+
+### Pay Fine
+```
+POST /api/borrowing/:borrowId/pay-fine
+Status: PROTECTED
+Body: { "amount": 25.00 }
+Response: 201 { 
+  success: true,
+  data: {
+    receipt: {
+      transactionId: "TXN-timestamp-id",
+      bookTitle: "Clean Code",
+      amountPaid: 25.00,
+      remainingFine: 25.00
+    }
+  }
+}
+Constraints:
+  - Amount must be > 0
+  - Amount cannot exceed outstanding fine
+  - Creates transaction record for audit trail
+  - User notified of payment
 ```
 
 ---

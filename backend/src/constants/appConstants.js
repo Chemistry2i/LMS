@@ -31,6 +31,7 @@ const RESERVATION_STATUS = {
 // Constants
 const FINE_PER_DAY = 10;
 const MAX_BORROW_DAYS = 14;
+const MAX_RENEWALS = 2;
 const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = 10;
 
@@ -41,6 +42,7 @@ module.exports = {
   RESERVATION_STATUS,
   FINE_PER_DAY,
   MAX_BORROW_DAYS,
+  MAX_RENEWALS,
   DEFAULT_PAGE,
   DEFAULT_LIMIT,
 };

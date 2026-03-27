@@ -52,6 +52,26 @@ const reservationValidator = [
   handleValidationErrors,
 ];
 
+// Password Validators (for change/reset password)
+const passwordValidator = [
+  body('newPassword').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+  body('confirmPassword').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+  body('currentPassword').optional().isLength({ min: 6 }).withMessage('Current password must be at least 6 characters'),
+  handleValidationErrors,
+];
+
+// Renewal Validator
+const renewValidator = [
+  body('borrowId').notEmpty().withMessage('Borrow ID is required').isInt().withMessage('Borrow ID must be a number'),
+  handleValidationErrors,
+];
+
+// Payment Validator
+const payFineValidator = [
+  body('amount').notEmpty().withMessage('Amount is required').isFloat({ min: 0.01 }).withMessage('Amount must be greater than 0'),
+  handleValidationErrors,
+];
+
 module.exports = {
   handleValidationErrors,
   registerValidator,
@@ -59,4 +79,7 @@ module.exports = {
   bookValidator,
   categoryValidator,
   reservationValidator,
+  passwordValidator,
+  renewValidator,
+  payFineValidator,
 };

@@ -1,9 +1,10 @@
 const { verifyToken } = require('../utils/helpers');
 const { ForbiddenError, AuthError } = require('../exceptions/AppError');
 const { ROLES } = require('../constants/appConstants');
+const TokenBlacklistModel = require('../models/TokenBlacklistModel');
 
 // Verify JWT Token Middleware
-const authenticate = (req, res, next) => {
+const authenticate = async (req, res, next) => {
   try {
     let token = req.headers.authorization;
     
@@ -13,6 +14,12 @@ const authenticate = (req, res, next) => {
 
     if (!token) {
       throw new AuthError('No token provided');
+    }
+
+    // Check if token is blacklisted
+    const isBlacklisted = await TokenBlacklistModel.isTokenBlacklisted(token);
+    if (isBlacklisted) {
+      throw new AuthError('Session expired. Please login again.');
     }
 
     const decoded = verifyToken(token);

@@ -19,6 +19,13 @@ const SUCCESS_MESSAGES = {
   RESERVATION_CREATED: 'Book reserved successfully',
   RESERVATION_CANCELLED: 'Reservation cancelled successfully',
   RESERVATION_MARKED_READY: 'Reservation marked as ready',
+  // Password messages
+  PASSWORD_CHANGED: 'Password changed successfully',
+  PASSWORD_RESET: 'Password reset successfully',
+  PASSWORD_RESET_EMAIL_SENT: 'Password reset link sent to your email',
+  // Renewal & Payment messages
+  BOOK_RENEWED: 'Book renewed successfully',
+  FINE_PAID: 'Fine paid successfully',
 };
 
 const ERROR_MESSAGES = {
@@ -40,6 +47,15 @@ const ERROR_MESSAGES = {
   RESERVATION_NOT_FOUND: 'Reservation not found',
   ALREADY_RESERVED: 'You already have a reservation for this book',
   BOOK_AVAILABLE: 'This book is currently available. Please checkout instead.',
+  // Password errors
+  PASSWORD_MISMATCH: 'Passwords do not match',
+  PASSWORD_TOO_SHORT: 'Password must be at least 6 characters',
+  INVALID_CURRENT_PASSWORD: 'Current password is incorrect',
+  PASSWORD_SAME: 'New password must be different from current password',
+  // Renewal & Payment errors
+  CANNOT_RENEW: 'Cannot renew this book',
+  CANNOT_PAY_FINE: 'Cannot pay fine for this book',
+  INVALID_AMOUNT: 'Invalid payment amount',
 };
 
 module.exports = {
