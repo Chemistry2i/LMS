@@ -1,0 +1,66 @@
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const compression = require('compression');
+const morgan = require('morgan');
+const config = require('./config/config');
+const errorHandler = require('./middleware/errorHandler');
+
+// Import routes
+const authRoutes = require('./routes/authRoutes');
+const bookRoutes = require('./routes/bookRoutes');
+const borrowingRoutes = require('./routes/borrowingRoutes');
+const userRoutes = require('./routes/userRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
+const reservationRoutes = require('./routes/reservationRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
+
+const app = express();
+
+// Middleware
+app.use(helmet());
+app.use(cors());
+app.use(compression());
+app.use(morgan('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/books', bookRoutes);
+app.use('/api/borrowing', borrowingRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/reservations', reservationRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+
+// Health Check
+app.get('/health', (req, res) => {
+  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+
+// 404 Handler
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'Route not found',
+  });
+});
+
+// Global Error Handler
+app.use(errorHandler);
+
+// Start Server
+const PORT = config.PORT;
+app.listen(PORT, () => {
+  console.log(`
+  ╔════════════════════════════════════════╗
+  ║  📚 LMS Backend Server                 ║
+  ║  🚀 Running on Port ${PORT}              ║
+  ║  🔐 JWT Authentication Enabled         ║
+  ║  🗄️  MySQL Database Connected          ║
+  ╚════════════════════════════════════════╝
+  `);
+});
+
+module.exports = app;
