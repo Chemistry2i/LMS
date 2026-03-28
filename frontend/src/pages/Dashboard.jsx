@@ -1,40 +1,23 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { LogOut, Book, Clock, Star, Search } from 'lucide-react';
+import { Book, Clock, Star, Search, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import MainLayout from './MainLayout';
 
 const Dashboard = () => {
-  const { user, logout } = useAuth();
-
-  const handleLogout = async () => {
-    await logout();
-  };
+  const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
-      <nav className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md sticky top-0 z-10 shadow-subtle">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-8">
-            <h1 className="text-xl font-bold text-sky-600">LMS</h1>
-            <div className="hidden md:flex items-center gap-6">
-              <Link to="/dashboard" className="text-sm font-semibold text-sky-600">Dashboard</Link>
-              <Link to="/books" className="text-sm font-medium text-muted hover:text-sky-600 transition-smooth">Catalog</Link>
-              <Link to="/my-library" className="text-sm font-medium text-muted hover:text-sky-600 transition-smooth">My Books</Link>
+    <MainLayout>
+      <div className="space-y-8 animate-fade-in">
+        <div className="card">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Jambo, {user?.username}! 👋</h2>
+              <p className="text-muted mt-1">Ready to explore some knowledge today?</p>
             </div>
           </div>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-smooth"
-          >
-            <LogOut className="w-5 h-5" />
-            Logout
-          </button>
-        </div>
-      </nav>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="card">
-          <h2 className="heading-md mb-4">Welcome, {user?.username}!</h2>
+          
           <div className="flex flex-wrap gap-4 mb-8">
              <Link to="/books" className="px-6 py-3 bg-sky-600 text-white rounded-lg flex items-center gap-2 hover:bg-sky-700 transition-smooth">
                 <Search className="w-5 h-5" /> Browse Books
@@ -91,7 +74,7 @@ const Dashboard = () => {
            </div>
         </div>
       </div>
-    </div>
+    </MainLayout>
   );
 };
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import MainLayout from '../components/Layout/MainLayout';
-import BookCard from '../components/Books/BookCard';
+import MainLayout from './MainLayout';
+import BookCard from './BookCard';
 import { Library, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
 
 const MyLibrary = () => {

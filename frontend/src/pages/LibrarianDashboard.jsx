@@ -2,22 +2,23 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, Users, BookOpen, AlertCircle, Plus, FileText, Settings, Database, History, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import MainLayout from './MainLayout';
 
 const LibrarianDashboard = () => {
   const stats = [
-    { label: 'Total Books', value: '1,284', icon: BookOpen, color: 'text-blue-600', bg: 'bg-blue-50' },
+    { label: 'Total Books', value: '1,284', icon: BookOpen, color: 'text-sky-600', bg: 'bg-sky-50' },
     { label: 'Active Members', value: '452', icon: Users, color: 'text-accent-600', bg: 'bg-accent-50' },
     { label: 'Pending Returns', value: '12', icon: AlertCircle, color: 'text-amber-600', bg: 'bg-amber-50' },
     { label: 'Monthly Growth', value: '+14%', icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50' },
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <MainLayout>
+      <div className="animate-fade-in">
         <div className="flex justify-between items-end mb-8">
           <div>
-            <h1 className="heading-lg">Librarian Command Center</h1>
-            <p className="text-muted">Institutional overview and collection management</p>
+            <h1 className="text-3xl font-bold">Librarian Command Center</h1>
+            <p className="text-muted">Overview of Kampala Branch collection</p>
           </div>
           <div className="flex gap-3">
             <Link to="/reports" className="btn-outline flex items-center gap-2">
@@ -123,7 +124,7 @@ const LibrarianDashboard = () => {
           </div>
         </div>
       </div>
-    </div>
+    </MainLayout>
   );
 };
 

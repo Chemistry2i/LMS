@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import MainLayout from '../components/Layout/MainLayout';
+import MainLayout from './MainLayout';
 import { Plus, Book, Hash, User, Tag, FileText, Banknote, Save } from 'lucide-react';
 import toast from 'react-hot-toast';
 

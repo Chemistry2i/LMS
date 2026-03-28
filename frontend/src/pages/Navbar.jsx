@@ -1,7 +1,7 @@
 import React from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { LogOut, Bell, Search, User } from 'lucide-react';
-import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
+import { Bell, Search, User, Sun, Moon, LogOut } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -22,7 +22,7 @@ const Navbar = () => {
 
       <div className="flex items-center gap-2 md:gap-4">
         <button onClick={toggleTheme} className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-smooth">
-          {isDark ? '🌙' : '☀️'}
+          {isDark ? <Sun className="w-5 h-5 text-amber-500" /> : <Moon className="w-5 h-5 text-sky-600" />}
         </button>
         <button className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-smooth relative text-slate-600 dark:text-slate-400">
           <Bell className="w-5 h-5" />

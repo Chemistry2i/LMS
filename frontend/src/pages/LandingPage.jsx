@@ -1,254 +1,148 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, BookOpen, Users, Zap, Globe, Star, ArrowRight, Search, BarChart3, Heart, Bell, Mail, Phone, MapPin, Sparkles, Check, HelpCircle } from 'lucide-react';
+import { 
+  ChevronDown, BookOpen, Users, Zap, Globe, Star, ArrowRight, 
+  Search, BarChart3, Heart, Bell, Mail, Phone, MapPin, 
+  Sparkles, Check, HelpCircle, Sun, Moon
+} from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+
+const featureColors = {
+  sky: {
+    bg: 'bg-sky-100 dark:bg-sky-900/30',
+    text: 'text-sky-600 dark:text-sky-400',
+  },
+  blue: {
+    bg: 'bg-blue-100 dark:bg-blue-900/30',
+    text: 'text-blue-600 dark:text-blue-400',
+  },
+  indigo: {
+    bg: 'bg-indigo-100 dark:bg-indigo-900/30',
+    text: 'text-accent-600',
+  },
+};
+
+const Navbar = ({ isDark, toggleTheme, isMenuOpen, setIsMenuOpen }) => (
+  <nav className="fixed top-0 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md z-50 shadow-subtle">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="flex justify-between items-center h-16">
+        <Link to="/" className="flex items-center gap-2 group">
+          <div className="w-10 h-10 bg-gradient-to-r from-sky-600 to-blue-500 rounded-lg flex items-center justify-center">
+            <BookOpen className="w-6 h-6 text-white" />
+          </div>
+          <span className="text-xl font-bold bg-gradient-to-r from-sky-600 to-blue-500 bg-clip-text text-transparent">LMS</span>
+        </Link>
+
+        <div className="hidden md:flex items-center gap-8">
+          {['features', 'about', 'pricing', 'contact'].map((item) => (
+            <a key={item} href={`#${item}`} className="text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-sky-600 transition-smooth capitalize">
+              {item}
+            </a>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-4">
+          <button onClick={toggleTheme} className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-smooth">
+            {isDark ? <Sun className="w-5 h-5 text-amber-500" /> : <Moon className="w-5 h-5 text-sky-600" />}
+          </button>
+          <Link to="/login" className="hidden sm:inline-block px-4 py-2 text-sm font-medium text-sky-600 border border-sky-600 rounded-lg hover:bg-sky-50 dark:hover:bg-sky-900 transition-smooth">Login</Link>
+          <Link to="/register" className="hidden sm:inline-block px-6 py-2 bg-gradient-to-r from-sky-500 to-blue-600 text-white rounded-lg hover:shadow-lg transition-smooth font-medium text-sm">Get Started</Link>
+          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
+            <ChevronDown className={`w-5 h-5 transition-transform ${isMenuOpen ? 'rotate-180' : ''}`} />
+          </button>
+        </div>
+      </div>
+    </div>
+    {isMenuOpen && (
+      <div className="md:hidden border-t border-slate-200 dark:border-slate-800 p-4 space-y-3">
+        {['features', 'about', 'pricing'].map((item) => (
+          <a key={item} href={`#${item}`} className="block text-slate-700 dark:text-slate-300 hover:text-sky-600 capitalize">{item}</a>
+        ))}
+        <Link to="/login" className="block text-slate-700 dark:text-slate-300 hover:text-sky-600">Login</Link>
+        <Link to="/register" className="block w-full px-4 py-2 bg-gradient-to-r from-sky-500 to-blue-600 text-white rounded-lg text-center">Get Started</Link>
+      </div>
+    )}
+  </nav>
+);
+
+const Hero = () => (
+  <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-50 to-blue-50 dark:from-slate-900 dark:to-slate-800 pt-16">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 grid md:grid-cols-2 gap-12 items-center">
+      <div className="space-y-6 animate-fade-in-up">
+        <span className="px-4 py-2 bg-sky-100 dark:bg-sky-900 text-sky-700 dark:text-sky-300 rounded-full text-xs font-bold uppercase tracking-wider">✨ Next-Gen Library Management</span>
+        <h1 className="heading-lg">Discover, Borrow & Manage <span className="bg-gradient-to-r from-sky-600 to-blue-500 bg-clip-text text-transparent">Your Library</span></h1>
+        <p className="text-lg text-slate-600 dark:text-slate-400 max-w-xl">Combining institutional power with modern analytics. A beautiful, intuitive platform for librarians and members in Uganda.</p>
+        <div className="flex flex-col sm:flex-row gap-4 pt-4">
+          <Link to="/register" className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-sky-500 to-blue-600 text-white rounded-xl font-bold hover:shadow-lg hover:scale-105 transition-smooth">Start Free Trial <ArrowRight className="ml-2 w-5 h-5" /></Link>
+          <a href="#features" className="inline-flex items-center justify-center px-8 py-4 border-2 border-sky-500 text-sky-600 dark:text-sky-400 rounded-xl font-bold hover:bg-sky-50 dark:hover:bg-sky-900 transition-smooth">Learn More</a>
+        </div>
+        <div className="pt-8 border-t border-slate-200 dark:border-slate-700">
+          <div className="flex gap-1 mb-1">{[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />)}</div>
+          <p className="text-sm text-slate-600 dark:text-slate-400">Trusted by 200+ local libraries across Kampala</p>
+        </div>
+      </div>
+      <div className="hidden md:block relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-sky-500 to-blue-500 rounded-2xl blur-3xl opacity-20"></div>
+        <div className="relative bg-white/50 dark:bg-slate-800/50 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-white/20">
+          <div className="space-y-4">
+            <div className="h-3 bg-sky-300 dark:bg-sky-600 rounded w-32"></div>
+            <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded w-full"></div>
+            <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded w-full"></div>
+            <div className="grid grid-cols-2 gap-4 pt-4">
+              <div className="h-12 bg-gradient-to-r from-sky-600 to-blue-500 rounded"></div>
+              <div className="h-12 bg-sky-100 dark:bg-sky-900 rounded"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+);
+
+const Features = () => (
+  <section id="features" className="py-20 bg-white dark:bg-slate-900">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="text-center mb-16">
+        <h2 className="heading-md mb-4 text-slate-900 dark:text-white">Powerful Features</h2>
+        <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">Everything you need to manage your library efficiently and beautifully.</p>
+      </div>
+      <div className="grid md:grid-cols-3 gap-8">
+        {[
+          { icon: Search, title: 'Smart Catalog', description: 'Advanced search with filters and personalized recommendations.', color: 'sky' },
+          { icon: Users, title: 'Member Portal', description: 'Manage history, reservations, and fines seamlessly in Shs.', color: 'blue' },
+          { icon: BarChart3, title: 'Real-time Analytics', description: 'Powerful dashboards with borrowing trends and insights.', color: 'indigo' },
+          { icon: Globe, title: 'Global Access', description: 'Mobile-friendly platform accessible anywhere, anytime.', color: 'sky' },
+          { icon: Heart, title: 'Reviews', description: 'Rate and review books to help your community discover great reads.', color: 'blue' },
+          { icon: Bell, title: 'Notifications', description: 'Get alerts about reservations and upcoming return dates.', color: 'indigo' },
+        ].map((feature, idx) => (
+          <div key={idx} className="card group hover:scale-[1.02] transition-smooth border-slate-50 dark:border-slate-800">
+            <div className={`w-12 h-12 ${featureColors[feature.color].bg} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-smooth`}>
+              <feature.icon className={`w-6 h-6 ${featureColors[feature.color].text}`} />
+            </div>
+            <h3 className="text-lg font-bold mb-2 text-slate-900 dark:text-white">{feature.title}</h3>
+            <p className="text-sm text-muted leading-relaxed">{feature.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+);
 
 const LandingPage = () => {
   const { isDark, toggleTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const featureColors = {
-    sky: {
-      bg: 'bg-sky-100 dark:bg-sky-900/30',
-      text: 'text-sky-600 dark:text-sky-400',
-    },
-    blue: {
-      bg: 'bg-blue-100 dark:bg-blue-900/30',
-      text: 'text-blue-600 dark:text-blue-400',
-    },
-    indigo: {
-      bg: 'bg-indigo-100 dark:bg-indigo-900/30',
-      text: 'text-accent-600',
-    },
-  };
-
   return (
-    <div className={`min-h-screen ${isDark ? 'dark' : ''}`}>
-      {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md z-50 shadow-subtle">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <Link to="/" className="flex items-center gap-2 group">
-              <div className="w-10 h-10 bg-gradient-to-r from-sky-600 to-blue-500 rounded-lg flex items-center justify-center">
-                <BookOpen className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-sky-600 to-blue-500 bg-clip-text text-transparent">
-                LMS
-              </span>
-            </Link>
-
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-8">
-              <a href="#features" className="text-slate-700 dark:text-slate-300 hover:text-sky-600 transition-smooth">
-                Features
-              </a>
-              <a href="#about" className="text-slate-700 dark:text-slate-300 hover:text-sky-600 transition-smooth">
-                About
-              </a>
-              <a href="#pricing" className="text-slate-700 dark:text-slate-300 hover:text-sky-600 transition-smooth">
-                Pricing
-              </a>
-              <a href="#contact" className="text-slate-700 dark:text-slate-300 hover:text-sky-600 transition-smooth">
-                Contact
-              </a>
-            </div>
-
-            {/* Right Actions */}
-            <div className="flex items-center gap-4">
-              <button
-                onClick={toggleTheme}
-                className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-smooth"
-              >
-                {isDark ? '🌙' : '☀️'}
-              </button>
-
-              <Link
-                to="/login"
-                className="hidden sm:inline-block px-4 py-2 rounded-lg text-sky-600 hover:bg-sky-50 dark:hover:bg-sky-900 transition-smooth font-medium"
-              >
-                Login
-              </Link>
-
-              <Link
-                to="/register"
-                className="hidden sm:inline-block px-6 py-2 bg-gradient-to-r from-sky-500 to-blue-600 text-white rounded-lg hover:shadow-lg transition-smooth font-medium"
-              >
-                Get Started
-              </Link>
-
-              {/* Mobile menu button */}
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="md:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
-              >
-                <ChevronDown className={`w-5 h-5 transition-transform ${isMenuOpen ? 'rotate-180' : ''}`} />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="md:hidden border-t border-slate-200 dark:border-slate-800">
-            <div className="px-4 py-4 space-y-3">
-              <a href="#features" className="block text-slate-700 dark:text-slate-300 hover:text-sky-600">
-                Features
-              </a>
-              <a href="#about" className="block text-slate-700 dark:text-slate-300 hover:text-sky-600">
-                About
-              </a>
-              <Link to="/login" className="block text-slate-700 dark:text-slate-300 hover:text-sky-600">
-                Login
-              </Link>
-              <Link to="/register" className="block w-full px-4 py-2 bg-gradient-to-r from-sky-500 to-blue-600 text-white rounded-lg text-center">
-                Get Started
-              </Link>
-            </div>
-          </div>
-        )}
-      </nav>
-
-      {/* Hero Section */}
-      <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-50 to-blue-50 dark:from-slate-900 dark:to-slate-800 pt-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            {/* Left Content */}
-            <div className="space-y-6 animate-fade-in-up">
-              <div className="inline-block">
-                <span className="px-4 py-2 bg-sky-100 dark:bg-sky-900 text-sky-700 dark:text-sky-300 rounded-full text-sm font-semibold">
-                  ✨ Next-Gen Library Management
-                </span>
-              </div>
-
-              <h1 className="heading-lg">
-                Discover, Borrow & Manage
-                <span className="bg-gradient-to-r from-sky-600 to-blue-500 bg-clip-text text-transparent">
-                  {' '}Your Library
-                </span>
-              </h1>
-
-              <p className="text-lg text-slate-600 dark:text-slate-400 max-w-xl">
-                LMS combines the institutional power of Greenstone with modern analytics from KYU Space. 
-                A beautiful, intuitive platform for librarians and members.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Link
-                  to="/register"
-                  className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-sky-500 to-blue-600 text-white rounded-lg font-semibold hover:shadow-lg hover:scale-105 transition-smooth"
-                >
-                  Start Free Trial
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Link>
-                <a
-                  href="#features"
-                  className="inline-flex items-center justify-center px-8 py-4 border-2 border-sky-500 text-sky-600 dark:text-sky-400 rounded-lg font-semibold hover:bg-sky-50 dark:hover:bg-sky-900 transition-smooth"
-                >
-                  Learn More
-                </a>
-              </div>
-
-              {/* Social Proof */}
-              <div className="flex items-center gap-6 pt-8 border-t border-slate-200 dark:border-slate-700">
-                <div>
-                  <div className="flex gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    ))}
-                  </div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">4.9/5 from 200+ libraries</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Visual */}
-            <div className="hidden md:block space-y-4">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-sky-500 to-blue-500 rounded-2xl blur-3xl opacity-20"></div>
-                <div className="relative bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 rounded-2xl p-8 shadow-2xl border border-white/10">
-                  <div className="space-y-4">
-                    <div className="h-3 bg-sky-300 dark:bg-sky-600 rounded w-32"></div>
-                    <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded w-full"></div>
-                    <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded w-full"></div>
-                    <div className="grid grid-cols-2 gap-4 pt-4">
-                      <div className="h-12 bg-gradient-to-r from-sky-600 to-blue-500 rounded"></div>
-                      <div className="h-12 bg-gradient-to-r from-sky-400 to-blue-400 rounded"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section id="features" className="py-20 bg-white dark:bg-slate-900">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="heading-md mb-4">Powerful Features</h2>
-            <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-              Everything you need to manage your library efficiently and beautifully
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: Search,
-                title: 'Smart Catalog',
-                description: 'Browse and search your library with advanced filters, categories, and recommendations',
-                color: 'sky',
-              },
-              {
-                icon: Users,
-                title: 'Member Management',
-                description: 'Manage borrowing history, reservations, fines, and user profiles seamlessly',
-                color: 'blue',
-              },
-              {
-                icon: BarChart3,
-                title: 'Real-time Analytics',
-                description: 'Librarians get powerful dashboards with borrowing trends and inventory insights',
-                color: 'indigo',
-              },
-              {
-                icon: Globe,
-                title: 'Global Access',
-                description: 'Access your library from anywhere, anytime with our mobile-friendly platform',
-                color: 'sky',
-              },
-              {
-                icon: Heart,
-                title: 'Community Reviews',
-                description: 'Members can rate and review books to help others discover great reads',
-                color: 'blue',
-              },
-              {
-                icon: Bell,
-                title: 'Notifications',
-                description: 'Save books for later and get instant alerts about reservations and renewals',
-                color: 'indigo',
-              },
-            ].map((feature, idx) => (
-              <div key={idx} className="card group hover:scale-105 transition-smooth">
-                <div className={`w-12 h-12 ${featureColors[feature.color].bg} rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-smooth`}>
-                  <feature.icon className={`w-6 h-6 ${featureColors[feature.color].text}`} />
-                </div>
-                <h3 className="heading-sm mb-2">{feature.title}</h3>
-                <p className="text-muted">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+    <div className={`min-h-screen ${isDark ? 'dark' : ''} bg-slate-50 dark:bg-slate-950 font-outfit`}>
+      <Navbar isDark={isDark} toggleTheme={toggleTheme} isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
+      <Hero />
+      <Features />
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 bg-white dark:bg-slate-900">
+      <section id="pricing" className="py-20 bg-slate-50 dark:bg-slate-800/30">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="heading-md mb-4">Simple, Transparent Pricing</h2>
+            <h2 className="heading-md mb-4 text-slate-900 dark:text-white">Simple, Transparent Pricing</h2>
             <p className="text-muted">Choose the plan that fits your community needs</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
@@ -257,20 +151,18 @@ const LandingPage = () => {
               { name: 'Professional', price: 'Shs 180,000', features: ['Unlimited Books', '500 Members', 'Advanced Analytics', 'Email Notifications'], recommended: true },
               { name: 'Institutional', price: 'Shs 750,000', features: ['Multiple Branches', 'Unlimited Members', 'API Access', '24/7 Priority Support'], recommended: false }
             ].map((plan, i) => (
-              <div key={i} className={`card relative ${plan.recommended ? 'border-2 border-sky-500 shadow-sky-100' : ''}`}>
-                {plan.recommended && <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-sky-500 text-white px-4 py-1 rounded-full text-xs font-bold">RECOMMENDED</span>}
-                <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
-                <div className="text-4xl font-bold mb-6">{plan.price}<span className="text-sm text-muted font-normal">/mo</span></div>
-                <ul className="space-y-4 mb-8">
+              <div key={i} className={`card relative flex flex-col p-8 ${plan.recommended ? 'border-2 border-sky-500 shadow-xl dark:bg-slate-900' : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800'}`}>
+                {plan.recommended && <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-sky-500 text-white px-4 py-1 rounded-full text-[10px] font-bold tracking-widest">RECOMMENDED</span>}
+                <h3 className="text-xl font-bold mb-2 text-slate-900 dark:text-white">{plan.name}</h3>
+                <div className="text-4xl font-bold mb-6 text-sky-600">{plan.price}{plan.price !== 'Free' && <span className="text-sm text-muted font-normal">/mo</span>}</div>
+                <ul className="space-y-4 mb-8 flex-1">
                   {plan.features.map((f, j) => (
-                    <li key={j} className="flex items-center gap-2 text-sm text-muted">
-                      <Check className="w-4 h-4 text-sky-500" /> {f}
+                    <li key={j} className="flex items-center gap-3 text-sm text-muted">
+                      <Check className="w-4 h-4 text-sky-500 shrink-0" /> {f}
                     </li>
                   ))}
                 </ul>
-                <Link to="/register" className={`w-full py-3 rounded-lg font-semibold text-center block transition-smooth ${plan.recommended ? 'bg-sky-600 text-white hover:bg-sky-700' : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200'}`}>
-                  Get Started
-                </Link>
+                <Link to="/register" className={`w-full py-3 rounded-xl font-bold text-center block transition-smooth ${plan.recommended ? 'bg-sky-600 text-white hover:bg-sky-700' : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-900 dark:text-white'}`}>Get Started</Link>
               </div>
             ))}
           </div>
@@ -278,21 +170,21 @@ const LandingPage = () => {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-20 bg-slate-50 dark:bg-slate-800/50">
+      <section className="py-20 bg-white dark:bg-slate-900">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="heading-md text-center mb-12">Frequently Asked Questions</h2>
-          <div className="space-y-6">
+          <h2 className="heading-md text-center mb-12 text-slate-900 dark:text-white">Frequently Asked Questions</h2>
+          <div className="space-y-4">
             {[
-              { q: "How do I return a book?", a: "Simply visit your dashboard, go to 'My Library', and click the 'Return' button next to the book. You can also drop it off at the physical library kiosk." },
-              { q: "What happens if I have an overdue book?", a: "LMS automatically calculates fines based on your library's policy. You will receive email notifications 3 days before the due date." },
-              { q: "Can I reserve a book that is currently borrowed?", a: "Yes! You can place a reservation. We will notify you via the app and email as soon as the book is returned." }
+              { q: "How do I return a book?", a: "Visit your dashboard, go to 'My Library', and click the 'Return' button. You can also drop it off at the physical library kiosk." },
+              { q: "What happens if I have an overdue book?", a: "LMS automatically calculates fines based on Shs 500/day. You will receive notifications 3 days before the due date." },
+              { q: "Can I reserve a book that is currently borrowed?", a: "Yes! Place a reservation and we will notify you via the app and email as soon as the book is returned." }
             ].map((faq, i) => (
-              <div key={i} className="card bg-white dark:bg-slate-900">
+              <div key={i} className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
                 <div className="flex gap-4">
                   <HelpCircle className="w-6 h-6 text-sky-500 shrink-0" />
                   <div>
-                    <h4 className="font-bold mb-2">{faq.q}</h4>
-                    <p className="text-muted text-sm">{faq.a}</p>
+                    <h4 className="font-bold mb-2 text-slate-900 dark:text-white">{faq.q}</h4>
+                    <p className="text-muted text-sm leading-relaxed">{faq.a}</p>
                   </div>
                 </div>
               </div>
@@ -302,37 +194,27 @@ const LandingPage = () => {
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-20 bg-slate-50 dark:bg-slate-800/50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="heading-md mb-6">Built for the Modern Librarian</h2>
-              <p className="text-lg text-muted mb-6">
-                LMS was founded with a single mission: to democratize access to knowledge by providing world-class tools to the guardians of information.
-              </p>
-              <div className="space-y-4">
-                <div className="flex items-start gap-4">
-                  <div className="mt-1 p-2 bg-sky-100 dark:bg-sky-900 rounded-lg">
-                    <Sparkles className="w-5 h-5 text-sky-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold">Our Mission</h4>
-                    <p className="text-muted">Empowering local communities through digital transformation of traditional libraries.</p>
-                  </div>
-                </div>
+      <section id="about" className="py-20 bg-slate-50 dark:bg-slate-800/30">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-12 items-center">
+          <div>
+            <h2 className="heading-md mb-6 text-slate-900 dark:text-white">Built for the Modern Librarian</h2>
+            <p className="text-lg text-muted mb-8 leading-relaxed">LMS was founded with a single mission: to democratize access to knowledge by providing world-class tools to the guardians of information in East Africa.</p>
+            <div className="flex items-start gap-4">
+              <div className="p-2 bg-sky-100 dark:bg-sky-900 rounded-lg"><Sparkles className="w-5 h-5 text-sky-600" /></div>
+              <div>
+                <h4 className="font-bold text-slate-900 dark:text-white">Our Mission</h4>
+                <p className="text-muted text-sm">Empowering local communities through digital transformation of traditional libraries.</p>
               </div>
             </div>
-            <div className="bg-white dark:bg-slate-900 p-8 rounded-2xl shadow-subtle border border-slate-100 dark:border-slate-800">
-               <div className="grid grid-cols-2 gap-6">
-                  <div className="text-center">
-                    <div className="text-4xl font-bold text-sky-600">500+</div>
-                    <p className="text-sm text-muted">Libraries</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-4xl font-bold text-blue-600">1M+</div>
-                    <p className="text-sm text-muted">Books Managed</p>
-                  </div>
-               </div>
+          </div>
+          <div className="bg-white dark:bg-slate-900 p-10 rounded-3xl shadow-subtle border border-slate-100 dark:border-slate-800 grid grid-cols-2 gap-8">
+            <div className="text-center">
+              <div className="text-4xl font-bold text-sky-600 mb-1">500+</div>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Libraries</p>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl font-bold text-blue-600 mb-1">1M+</div>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Books Managed</p>
             </div>
           </div>
         </div>
@@ -341,85 +223,59 @@ const LandingPage = () => {
       {/* Contact Section */}
       <section id="contact" className="py-20 bg-white dark:bg-slate-900">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="heading-md mb-4">Get in Touch</h2>
+          <h2 className="heading-md mb-4 text-slate-900 dark:text-white">Get in Touch</h2>
           <p className="text-muted mb-12">Have questions? We're here to help you scale your collection.</p>
           <div className="grid sm:grid-cols-3 gap-8">
-            <div className="flex flex-col items-center gap-2">
-              <Mail className="w-6 h-6 text-sky-600" />
-              <span className="font-medium">support@lms.com</span>
+            <div className="flex flex-col items-center gap-3">
+              <div className="p-4 bg-sky-50 dark:bg-sky-900/30 rounded-full"><Mail className="w-6 h-6 text-sky-600" /></div>
+              <span className="font-semibold text-slate-900 dark:text-white text-sm">support@lms.com</span>
             </div>
-            <div className="flex flex-col items-center gap-2">
-              <Phone className="w-6 h-6 text-sky-600" />
-              <span className="font-medium">+256 700 000000</span>
+            <div className="flex flex-col items-center gap-3">
+              <div className="p-4 bg-sky-50 dark:bg-sky-900/30 rounded-full"><Phone className="w-6 h-6 text-sky-600" /></div>
+              <span className="font-semibold text-slate-900 dark:text-white text-sm">+256 700 000000</span>
             </div>
-            <div className="flex flex-col items-center gap-2">
-              <MapPin className="w-6 h-6 text-sky-600" />
-              <span className="font-medium">Plot 12, Kampala Rd, Kampala</span>
+            <div className="flex flex-col items-center gap-3">
+              <div className="p-4 bg-sky-50 dark:bg-sky-900/30 rounded-full"><MapPin className="w-6 h-6 text-sky-600" /></div>
+              <span className="font-semibold text-slate-900 dark:text-white text-sm text-center">Plot 12, Kampala Rd, Kampala</span>
             </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-sky-600 to-blue-600">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="heading-md text-white mb-4">Ready to Transform Your Library?</h2>
-          <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
-            Join hundreds of libraries using LMS to engage members and streamline operations
-          </p>
-          <Link
-            to="/register"
-            className="inline-flex items-center px-8 py-4 bg-white text-sky-600 rounded-lg font-semibold hover:shadow-lg transition-smooth"
-          >
-            Get Started Free
-            <ArrowRight className="ml-2 w-5 h-5" />
-          </Link>
-        </div>
+      <section className="py-20 bg-gradient-to-r from-sky-600 to-blue-600 mx-4 sm:mx-8 rounded-3xl mb-20 text-center">
+        <h2 className="heading-md text-white mb-4">Ready to Transform Your Library?</h2>
+        <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">Join hundreds of libraries using LMS to engage members and streamline operations.</p>
+        <Link to="/register" className="inline-flex items-center px-10 py-4 bg-white text-sky-600 rounded-xl font-bold hover:shadow-2xl transition-smooth hover:scale-105">Get Started Free <ArrowRight className="ml-2 w-5 h-5" /></Link>
       </section>
 
       {/* Footer */}
-      <footer className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <h3 className="font-semibold text-slate-900 dark:text-white mb-4">Product</h3>
-              <ul className="space-y-2 text-muted">
-                <li><a href="#" className="hover:text-sky-600 transition-smooth">Features</a></li>
-                <li><a href="#" className="hover:text-sky-600 transition-smooth">Pricing</a></li>
-                <li><a href="#" className="hover:text-sky-600 transition-smooth">Security</a></li>
-              </ul>
+      <footer className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 pt-16 pb-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-4 gap-12 mb-12">
+            <div className="col-span-1 md:col-span-1">
+              <Link to="/" className="flex items-center gap-2 mb-6">
+                <div className="w-8 h-8 bg-gradient-to-r from-sky-600 to-blue-500 rounded flex items-center justify-center font-bold text-white text-sm">L</div>
+                <span className="text-xl font-bold text-slate-900 dark:text-white">LMS</span>
+              </Link>
+              <p className="text-sm text-muted leading-relaxed">The standard for library management in Uganda. Professional, academic, and community-focused.</p>
             </div>
-            <div>
-              <h3 className="font-semibold text-slate-900 dark:text-white mb-4">Company</h3>
-              <ul className="space-y-2 text-muted">
-                <li><a href="#" className="hover:text-library-600 transition-smooth">About</a></li>
-                <li><a href="#" className="hover:text-library-600 transition-smooth">Blog</a></li>
-                <li><a href="#" className="hover:text-library-600 transition-smooth">Careers</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold text-slate-900 dark:text-white mb-4">Legal</h3>
-              <ul className="space-y-2 text-muted">
-                <li><a href="#" className="hover:text-sky-600 transition-smooth">Privacy</a></li>
-                <li><a href="#" className="hover:text-sky-600 transition-smooth">Terms</a></li>
-                <li><a href="#" className="hover:text-sky-600 transition-smooth">Contact</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold text-slate-900 dark:text-white mb-4">Connect</h3>
-              <ul className="space-y-2 text-muted">
-                <li><a href="#" className="hover:text-library-600 transition-smooth">Twitter</a></li>
-                <li><a href="#" className="hover:text-library-600 transition-smooth">GitHub</a></li>
-                <li><a href="#" className="hover:text-library-600 transition-smooth">LinkedIn</a></li>
-              </ul>
-            </div>
+            {['Product', 'Company', 'Legal'].map((cat) => (
+              <div key={cat}>
+                <h3 className="font-bold text-slate-900 dark:text-white mb-6 uppercase text-xs tracking-widest">{cat}</h3>
+                <ul className="space-y-4">
+                  {['Features', 'Pricing', 'About', 'Contact'].map((link) => (
+                    <li key={link}><a href="#" className="text-sm text-muted hover:text-sky-600 transition-smooth">{link}</a></li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
-
-          <div className="border-t border-slate-200 dark:border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-muted mb-4 md:mb-0">&copy; 2024 LMS. All rights reserved.</p>
-            <div className="flex gap-6">
-              <a href="#" className="text-muted hover:text-sky-600 transition-smooth">Privacy Policy</a>
-              <a href="#" className="text-muted hover:text-sky-600 transition-smooth">Terms of Service</a>
+          <div className="border-t border-slate-100 dark:border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-xs text-muted">&copy; 2024 LMS Uganda. All rights reserved.</p>
+            <div className="flex gap-8 text-xs text-muted">
+              <a href="#" className="hover:text-sky-600 transition-smooth">Privacy Policy</a>
+              <a href="#" className="hover:text-sky-600 transition-smooth">Terms of Service</a>
             </div>
           </div>
         </div>
