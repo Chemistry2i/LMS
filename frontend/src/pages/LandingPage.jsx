@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, BookOpen, Users, Zap, Globe, Star, ArrowRight, Search, BarChart3, Heart, Bell, Mail, Phone, MapPin, Sparkles } from 'lucide-react';
+import { ChevronDown, BookOpen, Users, Zap, Globe, Star, ArrowRight, Search, BarChart3, Heart, Bell, Mail, Phone, MapPin, Sparkles, Check, HelpCircle } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 
 const LandingPage = () => {
@@ -45,6 +45,9 @@ const LandingPage = () => {
               </a>
               <a href="#about" className="text-slate-700 dark:text-slate-300 hover:text-sky-600 transition-smooth">
                 About
+              </a>
+              <a href="#pricing" className="text-slate-700 dark:text-slate-300 hover:text-sky-600 transition-smooth">
+                Pricing
               </a>
               <a href="#contact" className="text-slate-700 dark:text-slate-300 hover:text-sky-600 transition-smooth">
                 Contact
@@ -235,6 +238,63 @@ const LandingPage = () => {
                 </div>
                 <h3 className="heading-sm mb-2">{feature.title}</h3>
                 <p className="text-muted">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section id="pricing" className="py-20 bg-white dark:bg-slate-900">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="heading-md mb-4">Simple, Transparent Pricing</h2>
+            <p className="text-muted">Choose the plan that fits your community needs</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { name: 'Community', price: 'Free', features: ['Up to 1,000 Books', '50 Members', 'Basic Analytics'], recommended: false },
+              { name: 'Professional', price: '$49', features: ['Unlimited Books', '500 Members', 'Advanced Analytics', 'Email Notifications'], recommended: true },
+              { name: 'Institutional', price: '$199', features: ['Multiple Branches', 'Unlimited Members', 'API Access', '24/7 Priority Support'], recommended: false }
+            ].map((plan, i) => (
+              <div key={i} className={`card relative ${plan.recommended ? 'border-2 border-sky-500 shadow-sky-100' : ''}`}>
+                {plan.recommended && <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-sky-500 text-white px-4 py-1 rounded-full text-xs font-bold">RECOMMENDED</span>}
+                <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
+                <div className="text-4xl font-bold mb-6">{plan.price}<span className="text-sm text-muted font-normal">/mo</span></div>
+                <ul className="space-y-4 mb-8">
+                  {plan.features.map((f, j) => (
+                    <li key={j} className="flex items-center gap-2 text-sm text-muted">
+                      <Check className="w-4 h-4 text-sky-500" /> {f}
+                    </li>
+                  ))}
+                </ul>
+                <Link to="/register" className={`w-full py-3 rounded-lg font-semibold text-center block transition-smooth ${plan.recommended ? 'bg-sky-600 text-white hover:bg-sky-700' : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200'}`}>
+                  Get Started
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-20 bg-slate-50 dark:bg-slate-800/50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="heading-md text-center mb-12">Frequently Asked Questions</h2>
+          <div className="space-y-6">
+            {[
+              { q: "How do I return a book?", a: "Simply visit your dashboard, go to 'My Library', and click the 'Return' button next to the book. You can also drop it off at the physical library kiosk." },
+              { q: "What happens if I have an overdue book?", a: "LMS automatically calculates fines based on your library's policy. You will receive email notifications 3 days before the due date." },
+              { q: "Can I reserve a book that is currently borrowed?", a: "Yes! You can place a reservation. We will notify you via the app and email as soon as the book is returned." }
+            ].map((faq, i) => (
+              <div key={i} className="card bg-white dark:bg-slate-900">
+                <div className="flex gap-4">
+                  <HelpCircle className="w-6 h-6 text-sky-500 shrink-0" />
+                  <div>
+                    <h4 className="font-bold mb-2">{faq.q}</h4>
+                    <p className="text-muted text-sm">{faq.a}</p>
+                  </div>
+                </div>
               </div>
             ))}
           </div>

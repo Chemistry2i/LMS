@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { TrendingUp, Users, BookOpen, AlertCircle, Plus, FileText } from 'lucide-react';
+import { TrendingUp, Users, BookOpen, AlertCircle, Plus, FileText, Settings, Database } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const LibrarianDashboard = () => {
   const stats = [
@@ -19,12 +20,12 @@ const LibrarianDashboard = () => {
             <p className="text-muted">Institutional overview and collection management</p>
           </div>
           <div className="flex gap-3">
-            <button className="btn-outline flex items-center gap-2">
+            <Link to="/reports" className="btn-outline flex items-center gap-2">
               <FileText className="w-4 h-4" /> Reports
-            </button>
-            <button className="btn-primary flex items-center gap-2 shadow-lg shadow-accent-200">
+            </Link>
+            <Link to="/manage-books" className="px-4 py-2 bg-sky-600 text-white rounded-lg flex items-center gap-2 shadow-lg shadow-sky-200">
               <Plus className="w-4 h-4" /> Add New Book
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -43,6 +44,32 @@ const LibrarianDashboard = () => {
               <h3 className="text-3xl font-bold mt-1">{stat.value}</h3>
             </motion.div>
           ))}
+        </div>
+
+        {/* Quick Actions Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+          <Link to="/manage-users" className="card group hover:border-sky-500 transition-smooth">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-sky-100 rounded-lg group-hover:bg-sky-600 group-hover:text-white transition-smooth">
+                <Users className="w-6 h-6" />
+              </div>
+              <div>
+                <h4 className="font-bold">Member Directory</h4>
+                <p className="text-xs text-muted">Manage 452 active members</p>
+              </div>
+            </div>
+          </Link>
+          <Link to="/manage-categories" className="card group hover:border-sky-500 transition-smooth">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-600 group-hover:text-white transition-smooth">
+                <Database className="w-6 h-6" />
+              </div>
+              <div>
+                <h4 className="font-bold">Book Categories</h4>
+                <p className="text-xs text-muted">24 active categories</p>
+              </div>
+            </div>
+          </Link>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
