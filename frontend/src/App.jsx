@@ -15,7 +15,24 @@ import Dashboard from './pages/Dashboard';
 import LibrarianDashboard from './pages/LibrarianDashboard';
 import BrowseBooks from './pages/BrowseBooks';
 import MyLibrary from './pages/MyLibrary';
+import BookDetails from './pages/BookDetails';
 import ManageBooks from './pages/ManageBooks';
+import ManageUsers from './pages/ManageUsers';
+import ManageCategories from './pages/ManageCategories';
+import ReportsPage from './pages/ReportsPage';
+import ProfilePage from './pages/ProfilePage';
+import SettingsPage from './pages/SettingsPage';
+import NotificationsPage from './pages/NotificationsPage';
+import FAQPage from './pages/FAQPage';
+import BorrowingHistoryPage from './pages/BorrowingHistoryPage';
+import NotFoundPage from './pages/NotFoundPage';
+import WishlistPage from './pages/WishlistPage';
+import AdvancedSearchPage from './pages/AdvancedSearchPage';
+import ReservationPage from './pages/ReservationPage';
+import TermsPage from './pages/TermsPage';
+import PrivacyPage from './pages/PrivacyPage';
+import AboutPage from './pages/AboutPage';
+import ScrollToTop from './pages/ScrollToTop';
 
 // Components
 import ProtectedRoute from './components/ProtectedRoute';
@@ -25,6 +42,7 @@ function App() {
     <ThemeProvider>
       <AuthProvider>
         <Router>
+          <ScrollToTop />
           <Toaster
             position="top-right"
             reverseOrder={false}
@@ -49,18 +67,35 @@ function App() {
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/librarian" element={<ProtectedRoute><LibrarianDashboard /></ProtectedRoute>} />
             <Route path="/books" element={<ProtectedRoute><BrowseBooks /></ProtectedRoute>} />
+            <Route path="/books/:id" element={<ProtectedRoute><BookDetails /></ProtectedRoute>} />
             <Route path="/my-library" element={<ProtectedRoute><MyLibrary /></ProtectedRoute>} />
             
             {/* Librarian Only Routes */}
             <Route path="/manage-books" element={<ProtectedRoute><ManageBooks /></ProtectedRoute>} />
-            <Route path="/manage-users" element={<ProtectedRoute><div className="p-8">Member Directory (Coming Soon)</div></ProtectedRoute>} />
-            <Route path="/manage-categories" element={<ProtectedRoute><div className="p-8">Category Manager (Coming Soon)</div></ProtectedRoute>} />
-            <Route path="/reports" element={<ProtectedRoute><div className="p-8">Institutional Reports (Coming Soon)</div></ProtectedRoute>} />
+            <Route path="/manage-users" element={<ProtectedRoute><ManageUsers /></ProtectedRoute>} />
+            <Route path="/manage-categories" element={<ProtectedRoute><ManageCategories /></ProtectedRoute>} />
+            <Route path="/reports" element={<ProtectedRoute><ReportsPage /></ProtectedRoute>} />
             <Route path="/history" element={<ProtectedRoute><div className="p-8">Transaction History (Coming Soon)</div></ProtectedRoute>} />
-            <Route path="/settings" element={<ProtectedRoute><div className="p-8">Account Settings (Coming Soon)</div></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+            <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+            <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
+            
+            {/* Phase 1 - New Pages */}
+            <Route path="/faq" element={<ProtectedRoute><FAQPage /></ProtectedRoute>} />
+            <Route path="/borrowing-history" element={<ProtectedRoute><BorrowingHistoryPage /></ProtectedRoute>} />
+            
+            {/* Phase 2 - Advanced Features */}
+            <Route path="/wishlist" element={<ProtectedRoute><WishlistPage /></ProtectedRoute>} />
+            <Route path="/advanced-search" element={<ProtectedRoute><AdvancedSearchPage /></ProtectedRoute>} />
+            <Route path="/reservations" element={<ProtectedRoute><ReservationPage /></ProtectedRoute>} />
+            
+            {/* Phase 3 - Static Pages & Legal */}
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
 
             {/* 404 Fallback */}
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Router>
       </AuthProvider>

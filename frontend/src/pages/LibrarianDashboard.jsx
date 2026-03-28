@@ -1,10 +1,29 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { TrendingUp, Users, BookOpen, AlertCircle, Plus, FileText, Settings, Database, History, Search } from 'lucide-react';
+import { Users, BookOpen, AlertCircle, Plus, FileText, Database, History, TrendingUp, Banknote } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import MainLayout from './MainLayout';
+import WelcomeBanner from '../components/WelcomeBanner';
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer,
+  Cell,
+  PieChart,
+  Pie,
+  AreaChart,
+  Area,
+  Legend
+} from 'recharts';
 
 const LibrarianDashboard = () => {
+  const { user } = useAuth();
+
   const stats = [
     { label: 'Total Books', value: '1,284', icon: BookOpen, color: 'text-sky-600', bg: 'bg-sky-50' },
     { label: 'Active Members', value: '452', icon: Users, color: 'text-accent-600', bg: 'bg-accent-50' },
@@ -12,22 +31,61 @@ const LibrarianDashboard = () => {
     { label: 'Monthly Growth', value: '+14%', icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50' },
   ];
 
+  const welcomeStats = [
+    { label: 'Total Books', value: '1,284', icon: BookOpen },
+    { label: 'Active Members', value: '452', icon: Users },
+    { label: 'Pending Returns', value: '12', icon: AlertCircle },
+    { label: 'Growth', value: '+14%', icon: TrendingUp },
+  ];
+
+  const categoryData = [
+    { name: 'Fiction', value: 450 },
+    { name: 'Academic', value: 300 },
+    { name: 'Luganda', value: 250 },
+    { name: 'History', value: 150 },
+    { name: 'Tech', value: 134 },
+  ];
+
+  const revenueData = [
+    { month: 'Jan', amount: 120000 },
+    { month: 'Feb', amount: 150000 },
+    { month: 'Mar', amount: 180000 },
+    { month: 'Apr', amount: 240000 },
+    { month: 'May', amount: 210000 },
+    { month: 'Jun', amount: 280000 },
+    { month: 'Jul', amount: 350000 },
+  ];
+
+  const chartData = [
+    { name: 'Jan', borrows: 400 },
+    { name: 'Feb', borrows: 300 },
+    { name: 'Mar', borrows: 600 },
+    { name: 'Apr', borrows: 800 },
+    { name: 'May', borrows: 500 },
+    { name: 'Jun', borrows: 900 },
+    { name: 'Jul', borrows: 1100 },
+  ];
+
+  const COLORS = ['#0ea5e9', '#3b82f6', '#6366f1', '#8b5cf6', '#a855f7'];
+
   return (
     <MainLayout>
       <div className="animate-fade-in">
-        <div className="flex justify-between items-end mb-8">
-          <div>
-            <h1 className="text-3xl font-bold">Librarian Command Center</h1>
-            <p className="text-muted">Overview of Kampala Branch collection</p>
-          </div>
-          <div className="flex gap-3">
-            <Link to="/reports" className="btn-outline flex items-center gap-2">
-              <FileText className="w-4 h-4" /> Reports
-            </Link>
-            <Link to="/manage-books" className="px-4 py-2 bg-sky-600 text-white rounded-lg flex items-center gap-2 shadow-lg shadow-sky-200">
-              <Plus className="w-4 h-4" /> Add New Book
-            </Link>
-          </div>
+        <WelcomeBanner 
+          userName={user?.username || 'Librarian'}
+          userRole="librarian"
+          primaryText="Welcome to the Librarian Command Center"
+          secondaryText="Manage your collection, track member activities, and generate insights"
+          stats={welcomeStats}
+        />
+
+        <div className="flex gap-3 mb-10">
+          <Link to="/reports" className="btn-outline flex items-center gap-2">
+            <FileText className="w-4 h-4" /> Reports
+          </Link>
+          <Link to="/manage-books" className="px-4 py-2 bg-sky-600 text-white rounded-lg flex items-center gap-2 hover:bg-sky-700 transition-smooth font-medium">
+            <Plus className="w-4 h-4" /> Add New Book
+          </Link>
         </div>
 
         {/* Quick Stats */}
@@ -36,13 +94,14 @@ const LibrarianDashboard = () => {
             <motion.div 
               key={idx}
               whileHover={{ y: -5 }}
-              className="card bg-white dark:bg-slate-900 border-none shadow-subtle"
+              className="card bg-white dark:bg-slate-900 border-none shadow-subtle relative overflow-hidden group"
             >
-              <div className={`${stat.bg} w-12 h-12 rounded-xl flex items-center justify-center mb-4`}>
+              <div className="absolute -right-4 -top-4 w-24 h-24 bg-sky-50 dark:bg-sky-900/10 rounded-full group-hover:scale-150 transition-transform duration-500" />
+              <div className={`${stat.bg} w-12 h-12 rounded-xl flex items-center justify-center mb-4 relative z-10`}>
                 <stat.icon className={`w-6 h-6 ${stat.color}`} />
               </div>
-              <p className="text-sm font-medium text-slate-500 uppercase tracking-wider">{stat.label}</p>
-              <h3 className="text-3xl font-bold mt-1">{stat.value}</h3>
+              <p className="text-sm font-medium text-slate-500 uppercase tracking-wider relative z-10">{stat.label}</p>
+              <h3 className="text-3xl font-bold mt-1 relative z-10">{stat.value}</h3>
             </motion.div>
           ))}
         </div>
@@ -73,14 +132,97 @@ const LibrarianDashboard = () => {
           </Link>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Analytics Chart Placeholder */}
-          <div className="lg:col-span-2 card h-[400px] flex flex-col justify-center items-center">
-            <TrendingUp className="w-12 h-12 text-slate-200 mb-4" />
-            <p className="text-muted font-medium italic">Borrowing Trends Visualization (Chart.js)</p>
-            <div className="w-full h-48 bg-gradient-to-t from-accent-50/50 to-transparent mt-8 rounded-b-2xl" />
+        <div className="grid lg:grid-cols-3 gap-8 mb-10">
+          {/* Borrowing Trends Chart */}
+          <div className="lg:col-span-2 card bg-white dark:bg-slate-900 p-6">
+            <h3 className="font-bold text-lg mb-8">Monthly Borrowing Trends</h3>
+            <div className="h-[300px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
+                  <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
+                  <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} cursor={{ fill: '#f8fafc' }} />
+                  <Bar dataKey="borrows" radius={[6, 6, 0, 0]}>
+                    {chartData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={index === chartData.length - 1 ? '#0ea5e9' : '#e2e8f0'} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
 
+          {/* Collection Distribution Pie Chart */}
+          <div className="card bg-white dark:bg-slate-900 p-6">
+            <h3 className="font-bold text-lg mb-8">Collection by Category</h3>
+            <div className="h-[300px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={categoryData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {categoryData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip contentStyle={{ borderRadius: '12px', border: 'none' }} />
+                  <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', paddingTop: '20px' }} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+
+        {/* Fine Collection Revenue Area Chart */}
+        <div className="grid lg:grid-cols-3 gap-8 mb-10">
+          <div className="lg:col-span-3 card bg-white dark:bg-slate-900 p-6">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h3 className="font-bold text-lg">Fine Collection Revenue</h3>
+                <p className="text-xs text-muted">Tracking total income in Ugandan Shillings</p>
+              </div>
+              <div className="p-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
+                <Banknote className="w-5 h-5 text-emerald-600" />
+              </div>
+            </div>
+            <div className="h-[300px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={revenueData}>
+                  <defs>
+                    <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.1}/>
+                      <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
+                  <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} tickFormatter={(value) => `Shs ${value / 1000}k`} />
+                  <Tooltip 
+                    formatter={(value) => [`Shs ${value.toLocaleString()}`, 'Revenue']}
+                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} 
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="amount" 
+                    stroke="#0ea5e9" 
+                    strokeWidth={3}
+                    fillOpacity={1} 
+                    fill="url(#colorRevenue)" 
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid lg:grid-cols-3 gap-8">
           {/* Recent Activity */}
           <div className="card">
             <div className="flex items-center justify-between mb-6">
