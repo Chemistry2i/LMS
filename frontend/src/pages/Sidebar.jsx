@@ -120,14 +120,14 @@ const Sidebar = () => {
   ];
 
   const memberItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+    { icon: LayoutDashboard, label: 'Dashboard', path: '/librarian' },
     { icon: Users, label: 'Members', path: '/manage-users' },
     { icon: BookOpen, label: 'Books', path: '/books-library'},
     {icon: Database, label: 'Categories', path: '/manage-categories' },
     { icon: BarChart3, label: 'Analytics & Reports', path: '/reports' },
     { icon: Bookmark, label: 'My Reservations', path: '/reservations' },
     { icon: Library, label: 'My Bookshelf', path: '/my-library' },
-    { icon: History, label: 'Borrowing History', path: '/borrowing-history' },
+    // { icon: History, label: 'Borrowing History', path: '/borrowing-history' },
     { icon: Heart, label: 'Wishlist', path: '/wishlist' },
     { icon: HelpCircle, label: 'Help & FAQ', path: '/faq' },
   ];
@@ -320,7 +320,7 @@ const Sidebar = () => {
             {librarianItems.filter(item => item.section === 'books').map((item) => (
               <NavLink key={item.path} to={item.path} className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-smooth group relative ${isActive ? 'bg-purple-50 text-purple-600 dark:bg-purple-900/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                 <item.icon className="w-5 h-5" />
-                <span className="font-medium text-sm">{item.label}</span>
+                <span className="font-medium text-xs">{item.label}</span>
                 {item.badge && <span className="absolute right-3 px-2 py-0.5 bg-red-500 text-white text-xs rounded-full font-bold">{item.badge}</span>}
               </NavLink>
             ))}
@@ -330,7 +330,7 @@ const Sidebar = () => {
             {librarianItems.filter(item => item.section === 'members').map((item) => (
               <NavLink key={item.path} to={item.path} className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-smooth group relative ${isActive ? 'bg-cyan-50 text-cyan-600 dark:bg-cyan-900/20' : item.color ? item.color + ' dark:text-slate-300' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                 <item.icon className="w-5 h-5" />
-                <span className="font-medium text-sm">{item.label}</span>
+                <span className="font-medium text-xs">{item.label}</span>
                 {item.badge && <span className="absolute right-3 px-2 py-0.5 bg-red-500 text-white text-xs rounded-full font-bold">{item.badge}</span>}
               </NavLink>
             ))}
@@ -340,7 +340,7 @@ const Sidebar = () => {
             {librarianItems.filter(item => item.section === 'borrowing').map((item) => (
               <NavLink key={item.path} to={item.path} className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-smooth group relative ${isActive ? 'bg-amber-50 text-amber-600 dark:bg-amber-900/20' : item.color ? item.color + ' dark:text-slate-300' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                 <item.icon className="w-5 h-5" />
-                <span className="font-medium text-sm">{item.label}</span>
+                <span className="font-medium text-xs">{item.label}</span>
                 {item.badge && <span className="absolute right-3 px-2 py-0.5 bg-red-500 text-white text-xs rounded-full font-bold">{item.badge}</span>}
               </NavLink>
             ))}
@@ -350,7 +350,7 @@ const Sidebar = () => {
             {librarianItems.filter(item => item.section === 'reservations').map((item) => (
               <NavLink key={item.path} to={item.path} className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-smooth group relative ${isActive ? 'bg-pink-50 text-pink-600 dark:bg-pink-900/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                 <item.icon className="w-5 h-5" />
-                <span className="font-medium text-sm">{item.label}</span>
+                <span className="font-medium text-xs">{item.label}</span>
                 {item.badge && <span className="absolute right-3 px-2 py-0.5 bg-red-500 text-white text-xs rounded-full font-bold">{item.badge}</span>}
               </NavLink>
             ))}
@@ -360,7 +360,7 @@ const Sidebar = () => {
             {librarianItems.filter(item => item.section === 'fines').map((item) => (
               <NavLink key={item.path} to={item.path} className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-smooth group relative ${isActive ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20' : item.color ? item.color + ' dark:text-slate-300' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                 <item.icon className="w-5 h-5" />
-                <span className="font-medium text-sm">{item.label}</span>
+                <span className="font-medium text-xs">{item.label}</span>
                 {item.badge && <span className="absolute right-3 px-2 py-0.5 bg-red-500 text-white text-xs rounded-full font-bold">{item.badge}</span>}
               </NavLink>
             ))}
@@ -370,7 +370,7 @@ const Sidebar = () => {
             {librarianItems.filter(item => item.section === 'communications').map((item) => (
               <NavLink key={item.path} to={item.path} className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-smooth group relative ${isActive ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                 <item.icon className="w-5 h-5" />
-                <span className="font-medium text-sm">{item.label}</span>
+                <span className="font-medium text-xs">{item.label}</span>
                 {item.badge && <span className="absolute right-3 px-2 py-0.5 bg-red-500 text-white text-xs rounded-full font-bold">{item.badge}</span>}
               </NavLink>
             ))}
@@ -380,7 +380,7 @@ const Sidebar = () => {
             {librarianItems.filter(item => item.section === 'admin').map((item) => (
               <NavLink key={item.path} to={item.path} className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-smooth group relative ${isActive ? 'bg-slate-200 text-slate-900 dark:bg-slate-700' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                 <item.icon className="w-5 h-5" />
-                <span className="font-medium text-sm">{item.label}</span>
+                <span className="font-medium text-xs">{item.label}</span>
                 {item.badge && <span className="absolute right-3 px-2 py-0.5 bg-red-500 text-white text-xs rounded-full font-bold">{item.badge}</span>}
               </NavLink>
             ))}
@@ -391,7 +391,7 @@ const Sidebar = () => {
             {memberItems.map((item) => (
               <NavLink key={item.path} to={item.path} className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-smooth group ${isActive ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                 <item.icon className="w-5 h-5" />
-                <span className="font-medium">{item.label}</span>
+                <span className="font-medium text-xs">{item.label}</span>
               </NavLink>
             ))}
           </>

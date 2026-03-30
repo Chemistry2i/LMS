@@ -1,24 +1,72 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MainLayout from './MainLayout';
 import { Tag, Plus, Search, Trash2, Edit2, BookOpen, Filter } from 'lucide-react';
+import CategoryModal from '../components/CategoryModal';
+import { fetchCategories, createCategory, deleteCategory } from '../services/categoryService';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const ManageCategories = () => {
   const [search, setSearch] = useState('');
-  const [categories, setCategories] = useState([
-    { id: 1, name: 'Fiction', count: 450, color: 'bg-sky-100 text-sky-600' },
-    { id: 2, name: 'Academic', count: 300, color: 'bg-blue-100 text-blue-600' },
-    { id: 3, name: 'Luganda Literature', count: 250, color: 'bg-indigo-100 text-indigo-600' },
-    { id: 4, name: 'History', count: 150, color: 'bg-amber-100 text-amber-600' },
-    { id: 5, name: 'Technology', count: 134, color: 'bg-emerald-100 text-emerald-600' },
-  ]);
+  const [categories, setCategories] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleDelete = (id) => {
-    setCategories(categories.filter(c => c.id !== id));
-    toast.success('Category removed');
+  // Fetch categories from backend
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await fetchCategories();
+        // Map backend fields to frontend
+        setCategories(
+          data.categories.map((cat) => ({
+            id: cat.category_id,
+            name: cat.category_name,
+            description: cat.description,
+            count: cat.book_count,
+            color: 'bg-sky-100 text-sky-600', // Optionally color-code by id or name
+          }))
+        );
+      } catch (err) {
+        toast.error('Failed to load categories');
+      }
+    };
+    load();
+  }, []);
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteCategory(id);
+      setCategories(categories.filter(c => c.id !== id));
+      toast.success('Category removed');
+    } catch (err) {
+      toast.error('Failed to delete category');
+    }
   };
 
+  const handleAddCategory = async (form) => {
+    setLoading(true);
+    try {
+      const res = await createCategory(form);
+      toast.success('Category added');
+      setModalOpen(false);
+      // Refetch categories
+      const data = await fetchCategories();
+      setCategories(
+        data.categories.map((cat) => ({
+          id: cat.category_id,
+          name: cat.category_name,
+          description: cat.description,
+          count: cat.book_count,
+          color: 'bg-sky-100 text-sky-600',
+        }))
+      );
+    } catch (err) {
+      toast.error(err?.response?.data?.message || 'Failed to add category');
+    } finally {
+      setLoading(false);
+    }
+  };
   const filtered = categories.filter(c => c.name.toLowerCase().includes(search.toLowerCase()));
 
   return (
@@ -29,7 +77,10 @@ const ManageCategories = () => {
             <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Category Manager</h1>
             <p className="text-muted mt-1">Organize your collection by genre and academic level</p>
           </div>
-          <button className="px-6 py-3 bg-sky-600 text-white rounded-xl font-bold flex items-center gap-2 hover:bg-sky-700 transition-smooth shadow-lg shadow-sky-100">
+          <button
+            className="px-6 py-3 bg-sky-600 text-white rounded-xl font-bold flex items-center gap-2 hover:bg-sky-700 transition-smooth shadow-lg shadow-sky-100"
+            onClick={() => setModalOpen(true)}
+          >
             <Plus className="w-5 h-5" /> Add New Category
           </button>
         </div>
@@ -79,13 +130,11 @@ const ManageCategories = () => {
                     </button>
                   </div>
                 </div>
-                
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-1">{cat.name}</h3>
                 <div className="flex items-center gap-2 text-muted">
                   <BookOpen className="w-4 h-4" />
                   <span className="text-sm font-medium">{cat.count} Books in Stock</span>
                 </div>
-
                 <div className="mt-6 pt-6 border-t border-slate-50 dark:border-slate-800">
                   <button className="w-full py-2 text-xs font-bold text-sky-600 hover:bg-sky-50 dark:hover:bg-sky-900/30 rounded-lg transition-smooth">
                     VIEW ALL BOOKS
@@ -93,6 +142,12 @@ const ManageCategories = () => {
                 </div>
               </motion.div>
             ))}
+                <CategoryModal
+                  open={modalOpen}
+                  onClose={() => setModalOpen(false)}
+                  onSubmit={handleAddCategory}
+                  loading={loading}
+                />
           </AnimatePresence>
 
           {/* Quick Add Placeholder */}
