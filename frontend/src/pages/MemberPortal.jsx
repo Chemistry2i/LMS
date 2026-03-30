@@ -6,11 +6,16 @@ import {
 } from 'lucide-react';
 import MemberLayout from './MemberLayout';
 import BookCard from './BookCard';
+import Modal from '../components/Modal';
+
 
 const MemberPortal = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [activeFilter, setActiveCategory] = useState('All');
+  // Modal state for book details
+  const [selectedBook, setSelectedBook] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   // Added createdAt field for sorting by 'Recently Added'
   const books = [
@@ -188,12 +193,57 @@ const MemberPortal = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.2 }}
+                onClick={() => {
+                  setSelectedBook(book);
+                  setShowModal(true);
+                }}
+                className="cursor-pointer"
               >
                 <BookCard book={book} />
               </motion.div>
             ))}
           </AnimatePresence>
         </motion.div>
+
+        {/* Book Details Modal */}
+        <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+          {selectedBook && (
+            <div className="max-w-md w-full">
+              <h3 className="text-2xl font-bold mb-2 text-slate-900 dark:text-white">{selectedBook.title}</h3>
+              <p className="text-slate-600 dark:text-slate-300 mb-1">By <span className="font-semibold">{selectedBook.author}</span></p>
+              <p className="text-xs text-slate-400 mb-4">Category: {selectedBook.category}</p>
+              <div className="mb-4">
+                <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold mr-2 ${selectedBook.status === 'Available' ? 'bg-green-100 text-green-700' : 'bg-rose-100 text-rose-700'}`}>{selectedBook.status}</span>
+                <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-sky-100 text-sky-700">UGX {selectedBook.fine_per_day} / day</span>
+              </div>
+              {/* Book description or reviews */}
+              <p className="text-slate-500 dark:text-slate-400 mb-6">A captivating book that explores important themes. {/* Replace with real description or reviews */}</p>
+              <div className="flex justify-end gap-2">
+                {selectedBook.status === 'Available' ? (
+                  <button
+                    className="px-6 py-2 rounded-full font-bold text-xs bg-sky-600 text-white hover:bg-sky-700 transition-all"
+                    onClick={() => alert('Borrowed!')}
+                  >
+                    Borrow
+                  </button>
+                ) : (
+                  <button
+                    className="px-6 py-2 rounded-full font-bold text-xs bg-amber-500 text-white hover:bg-amber-600 transition-all"
+                    onClick={() => alert('Reserved!')}
+                  >
+                    Reserve
+                  </button>
+                )}
+                <button
+                  className="px-4 py-2 rounded-full font-bold text-xs bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200"
+                  onClick={() => setShowModal(false)}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          )}
+        </Modal>
 
         {/* Pagination Controls */}
         {totalPages > 1 && (

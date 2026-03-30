@@ -1,5 +1,5 @@
 import React from 'react';
-import { Book, User, Info, ArrowRight } from 'lucide-react';
+import { Book, User, Info, ArrowRight, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const BookCard = ({ book }) => {
@@ -8,6 +8,12 @@ const BookCard = ({ book }) => {
     borrowed: 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400',
     reserved: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
   };
+
+  // Mock rating for demonstration (could be replaced with book.rating)
+  const rating = book.rating || 4.2;
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating - fullStars >= 0.5;
+  const totalStars = 5;
 
   return (
     <div className="card group hover:shadow-xl hover:-translate-y-1 transition-smooth flex flex-col h-full border-slate-100 dark:border-slate-800">
@@ -27,6 +33,18 @@ const BookCard = ({ book }) => {
         <div className="flex items-center gap-1.5 text-xs text-muted mt-1">
           <User className="w-3 h-3" />
           <span className="line-clamp-1">{book.author}</span>
+        </div>
+        {/* Review Stars */}
+        <div className="flex items-center gap-0.5 mt-1">
+          {Array.from({ length: totalStars }).map((_, i) => (
+            <Star
+              key={i}
+              className={`w-3.5 h-3.5 ${i < fullStars ? 'text-yellow-400 fill-yellow-400' : i === fullStars && hasHalfStar ? 'text-yellow-400' : 'text-slate-300 dark:text-slate-700'}`}
+              fill={i < fullStars ? 'currentColor' : i === fullStars && hasHalfStar ? 'url(#half)' : 'none'}
+              strokeWidth={i < fullStars || (i === fullStars && hasHalfStar) ? 0 : 1.5}
+            />
+          ))}
+          <span className="ml-1 text-xs text-slate-400">{rating.toFixed(1)}</span>
         </div>
         <div className="mt-2 flex items-center justify-between">
           <span className="text-sm font-bold text-sky-600">
