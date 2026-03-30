@@ -15,6 +15,6 @@ router.post('/', authenticate, authorize(ROLES.ADMIN, ROLES.LIBRARIAN), category
 router.put('/:id', authenticate, authorize(ROLES.ADMIN, ROLES.LIBRARIAN), categoryValidator, CategoryController.updateCategory);
 
 // Protected Routes (Admin only)
-router.delete('/:id', authenticate, authorize(ROLES.ADMIN), CategoryController.deleteCategory);
+router.delete('/:id', authenticate, authorize(ROLES.ADMIN, ROLES.LIBRARIAN), CategoryController.deleteCategory);
 
 module.exports = router;
