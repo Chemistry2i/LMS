@@ -1,52 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Eye } from 'lucide-react';
 import DataTable from '../../components/DataTable/DataTable';
 import AddBookModal from './AddBookModal';
 import MainLayout from '../MainLayout';
+import { getBooks, addBook } from '../../services/bookService';
+import { getCategories } from '../../services/categoryService';
 
 const BooksPageContent = () => {
-  const [books, setBooks] = useState([
-    {
-      id: '1',
-      title: 'The Great Gatsby',
-      isbn: '978-0743273565',
-      author: 'F. Scott Fitzgerald',
-      category: 'Fiction',
-      copies: 5,
-      available: 3,
-      status: 'available',
-    },
-    {
-      id: '2',
-      title: 'To Kill a Mockingbird',
-      isbn: '978-0061120084',
-      author: 'Harper Lee',
-      category: 'Fiction',
-      copies: 4,
-      available: 2,
-      status: 'available',
-    },
-    {
-      id: '3',
-      title: 'Python Crash Course',
-      isbn: '978-1593279288',
-      author: 'Eric Matthes',
-      category: 'Programming',
-      copies: 8,
-      available: 1,
-      status: 'low-stock',
-    },
-    {
-      id: '4',
-      title: 'Clean Code',
-      isbn: '978-0132350884',
-      author: 'Robert C. Martin',
-      category: 'Programming',
-      copies: 3,
-      available: 0,
-      status: 'unavailable',
-    },
-  ]);
+  const [books, setBooks] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [categoryMap, setCategoryMap] = useState({});
+  // Fetch books and categories on mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [booksRes, categoriesRes] = await Promise.all([
+          getBooks(),
+          getCategories(),
+        ]);
+        setCategories(categoriesRes);
+        // Build category_id -> name map
+        const catMap = {};
+        categoriesRes.forEach(cat => { catMap[cat.category_id] = cat.name; });
+        setCategoryMap(catMap);
+        // Map backend book fields to frontend fields
+        const mappedBooks = booksRes.map(b => ({
+          id: b.book_id,
+          title: b.title,
+          isbn: b.isbn,
+          author: b.author,
+          category: catMap[b.category_id] || b.category_id,
+          copies: b.total_copies,
+          available: b.available_copies,
+          status: b.available_copies === 0 ? 'unavailable' : (b.available_copies < 2 ? 'low-stock' : 'available'),
+        }));
+        setBooks(mappedBooks);
+      } catch (err) {
+        console.error('Failed to fetch books or categories', err);
+      }
+    };
+    fetchData();
+  }, []);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -54,15 +48,32 @@ const BooksPageContent = () => {
   const handleAddBook = async (formData) => {
     setIsLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      const newBook = {
-        id: String(books.length + 1),
-        ...formData,
-        status: formData.available > 0 ? 'available' : 'unavailable',
+      // Map frontend fields to backend fields
+      const payload = {
+        title: formData.title,
+        author: formData.author,
+        isbn: formData.isbn,
+        category_id: formData.category_id,
+        total_copies: formData.copies,
+        available_copies: formData.available,
+        description: formData.description,
       };
-
-      setBooks([...books, newBook]);
+      await addBook(payload);
+      // Refresh books from backend
+      const booksRes = await getBooks();
+      const catMap = {};
+      categories.forEach(cat => { catMap[cat.category_id] = cat.name; });
+      const mappedBooks = booksRes.map(b => ({
+        id: b.book_id,
+        title: b.title,
+        isbn: b.isbn,
+        author: b.author,
+        category: catMap[b.category_id] || b.category_id,
+        copies: b.total_copies,
+        available: b.available_copies,
+        status: b.available_copies === 0 ? 'unavailable' : (b.available_copies < 2 ? 'low-stock' : 'available'),
+      }));
+      setBooks(mappedBooks);
       setIsAddModalOpen(false);
     } catch (error) {
       console.error('Failed to add book:', error);

@@ -1,3 +1,11 @@
+// Returns a flat array of categories (no object wrapping)
+export const getCategories = async (params = {}) => {
+  const res = await api.get('/categories', { params });
+  if (res.data?.data?.items) return res.data.data.items;
+  if (res.data?.data?.categories) return res.data.data.categories;
+  if (res.data?.categories) return res.data.categories;
+  return [];
+};
 import api from './api';
 
 export const fetchCategories = async () => {

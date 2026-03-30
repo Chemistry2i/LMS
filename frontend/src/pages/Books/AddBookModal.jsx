@@ -1,60 +1,58 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AlertCircle } from 'lucide-react';
 import BaseModal from '../../components/Modals/BaseModal';
+
+
+import { getCategories } from '../../services/categoryService';
 
 const AddBookModal = ({ isOpen, onClose, onSubmit, isLoading }) => {
   const [formData, setFormData] = useState({
     title: '',
     author: '',
     isbn: '',
-    category: 'Fiction',
+    category_id: '',
     copies: 1,
     available: 1,
     description: '',
   });
 
+  const [categories, setCategories] = useState([]);
   const [errors, setErrors] = useState({});
+
+  // Fetch categories when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      getCategories().then((cats) => {
+        setCategories(cats);
+        // Set default category_id if not set
+        if (cats.length && !formData.category_id) {
+          setFormData((prev) => ({ ...prev, category_id: cats[0].category_id }));
+        }
+      });
+    }
+  }, [isOpen]);
 
   const validateForm = () => {
     const newErrors = {};
-
-    if (!formData.title.trim()) {
-      newErrors.title = 'Title is required';
-    }
-
-    if (!formData.author.trim()) {
-      newErrors.author = 'Author is required';
-    }
-
-    if (!formData.isbn.trim()) {
-      newErrors.isbn = 'ISBN is required';
-    }
-
-    if (formData.copies < 1) {
-      newErrors.copies = 'Must have at least 1 copy';
-    }
-
-    if (formData.available > formData.copies) {
-      newErrors.available = 'Available cannot exceed total copies';
-    }
-
+    if (!formData.title.trim()) newErrors.title = 'Title is required';
+    if (!formData.author.trim()) newErrors.author = 'Author is required';
+    if (!formData.isbn.trim()) newErrors.isbn = 'ISBN is required';
+    if (!formData.category_id) newErrors.category_id = 'Category is required';
+    if (formData.copies < 1) newErrors.copies = 'Must have at least 1 copy';
+    if (formData.available > formData.copies) newErrors.available = 'Available cannot exceed total copies';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
-
+    if (!validateForm()) return;
     await onSubmit(formData);
     setFormData({
       title: '',
       author: '',
       isbn: '',
-      category: 'Fiction',
+      category_id: categories[0]?.category_id || '',
       copies: 1,
       available: 1,
       description: '',
@@ -69,10 +67,7 @@ const AddBookModal = ({ isOpen, onClose, onSubmit, isLoading }) => {
       [name]: name === 'copies' || name === 'available' ? parseInt(value) : value,
     }));
     if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: '',
-      }));
+      setErrors((prev) => ({ ...prev, [name]: '' }));
     }
   };
 
@@ -169,22 +164,24 @@ const AddBookModal = ({ isOpen, onClose, onSubmit, isLoading }) => {
         {/* Category */}
         <div>
           <label className="block text-sm font-semibold text-slate-900 dark:text-white mb-2">
-            Category
+            Category *
           </label>
           <select
-            name="category"
-            value={formData.category}
+            name="category_id"
+            value={formData.category_id}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full px-4 py-2 border border-slate-200 dark:border-slate-600 bg-white text-slate-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
           >
-            <option value="Fiction">Fiction</option>
-            <option value="Non-Fiction">Non-Fiction</option>
-            <option value="Programming">Programming</option>
-            <option value="Business">Business</option>
-            <option value="Science">Science</option>
-            <option value="History">History</option>
-            <option value="Reference">Reference</option>
+            {categories.map((cat) => (
+              <option key={cat.category_id} value={cat.category_id}>{cat.name}</option>
+            ))}
           </select>
+          {errors.category_id && (
+            <div className="flex items-center gap-2 mt-2 text-red-600 dark:text-red-400 text-sm">
+              <AlertCircle className="w-4 h-4" />
+              {errors.category_id}
+            </div>
+          )}
         </div>
 
         {/* Copies and Available - Two columns */}
