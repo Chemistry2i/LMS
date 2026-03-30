@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { 
@@ -15,6 +15,7 @@ import {
 
 const MemberLayout = ({ children }) => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const { isDark } = useTheme();
   const [isAccountOpen, setIsAccountOpen] = useState(false);
 
@@ -54,7 +55,10 @@ const MemberLayout = ({ children }) => {
               </button>
 
               {isAccountOpen && (
-                <div className="absolute right-0 mt-2 w-96 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden animate-fade-in">
+                <div
+                  className="absolute right-0 mt-2 w-96 bg-white dark:bg-slate-900 shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden animate-fade-in"
+                  style={{ borderRadius: '8px' }}
+                >
                   <div className="p-6 bg-gradient-to-br from-sky-600 to-blue-700 text-white">
                     <p className="text-xs font-bold uppercase tracking-widest opacity-80 mb-1">Student Account</p>
                     <h3 className="text-lg font-bold">{user?.first_name} {user?.last_name}</h3>
@@ -86,7 +90,13 @@ const MemberLayout = ({ children }) => {
                       <Link to="/settings" className="flex items-center gap-3 p-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg">
                         <Settings className="w-4 h-4" /> Account Settings
                       </Link>
-                      <button onClick={logout} className="w-full flex items-center gap-3 p-2 text-sm text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg">
+                      <button
+                        onClick={async () => {
+                          await logout();
+                          navigate('/login');
+                        }}
+                        className="w-full flex items-center gap-3 p-2 text-sm text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg"
+                      >
                         <LogOut className="w-4 h-4" /> Logout
                       </button>
                     </div>

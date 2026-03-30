@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 // import img from "../"
 import { 
   LayoutDashboard, 
@@ -132,6 +132,8 @@ const Sidebar = () => {
     { icon: HelpCircle, label: 'Help & FAQ', path: '/faq' },
   ];
 
+  const { logout } = useAuth();
+  const navigate = useNavigate();
   return (
     <aside className="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 h-screen fixed left-0 top-0 z-40 hidden lg:flex flex-col">
       <div className="p-6">
@@ -397,7 +399,13 @@ const Sidebar = () => {
       </nav>
 
       <div className="p-4 border-t border-slate-100 dark:border-slate-800 space-y-2">
-        <button className="w-full flex items-center gap-3 px-4 py-2 text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20">
+        <button
+          onClick={async () => {
+            await logout();
+            navigate('/login');
+          }}
+          className="w-full flex items-center gap-3 px-4 py-2 text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"
+        >
           <LogOut className="w-5 h-5" />
           <span className="text-sm font-medium">Logout</span>
         </button>

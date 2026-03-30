@@ -1,10 +1,12 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { Bell, Search, User, Sun, Moon, LogOut } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const { isDark, toggleTheme } = useTheme();
 
   return (
@@ -29,7 +31,13 @@ const Navbar = () => {
           <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border-2 border-white dark:border-slate-900"></span>
         </button>
         <div className="h-8 w-[1px] bg-slate-200 dark:bg-slate-800 mx-1 hidden sm:block"></div>
-        <button onClick={logout} className="flex items-center gap-2 px-3 py-2 rounded-lg text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-smooth font-medium text-sm">
+        <button
+          onClick={async () => {
+            await logout();
+            navigate('/login');
+          }}
+          className="flex items-center gap-2 px-3 py-2 rounded-lg text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-smooth font-medium text-sm"
+        >
           <LogOut className="w-4 h-4" />
           <span className="hidden sm:inline">Logout</span>
         </button>
