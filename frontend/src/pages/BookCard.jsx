@@ -11,7 +11,7 @@ const BookCard = ({ book }) => {
 
   return (
     <div className="card group hover:shadow-xl hover:-translate-y-1 transition-smooth flex flex-col h-full border-slate-100 dark:border-slate-800">
-      <div className="aspect-[3/4] rounded-lg bg-slate-100 dark:bg-slate-800 relative mb-4 overflow-hidden flex items-center justify-center">
+      <div className="aspect-[16/10] rounded-lg bg-slate-100 dark:bg-slate-800 relative mb-3 overflow-hidden flex items-center justify-center">
         {book.cover_url ? (
           <img src={book.cover_url} alt={book.title} className="object-cover w-full h-full" />
         ) : (
@@ -28,7 +28,7 @@ const BookCard = ({ book }) => {
           <User className="w-3 h-3" />
           <span className="line-clamp-1">{book.author}</span>
         </div>
-        <div className="mt-3 flex items-center justify-between">
+        <div className="mt-2 flex items-center justify-between">
           <span className="text-sm font-bold text-sky-600">
             Shs {Number(book.fine_per_day || 500).toLocaleString()}
             <span className="text-[10px] text-muted font-normal"> /day</span>
@@ -37,7 +37,7 @@ const BookCard = ({ book }) => {
         </div>
       </div>
 
-      <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex gap-2">
+      <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 flex gap-2">
         <Link 
           to={`/books/${book.id}`}
           className="flex-1 py-2 px-3 bg-sky-600 hover:bg-sky-700 text-white rounded-lg text-xs font-bold transition-smooth flex items-center justify-center gap-2"

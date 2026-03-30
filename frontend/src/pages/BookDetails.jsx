@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import MainLayout from './MainLayout';
+import MemberLayout from './MemberLayout';
 import { 
   Book as BookIcon, 
   User, 
@@ -42,9 +42,9 @@ const BookDetails = () => {
   };
 
   return (
-    <MainLayout>
-      <div className="max-w-5xl mx-auto animate-fade-in">
-        <Link to="/books" className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-sky-600 transition-smooth mb-8">
+    <MemberLayout>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 animate-fade-in">
+        <Link to="/" className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-sky-600 transition-smooth mb-8">
           <ArrowLeft className="w-4 h-4" /> Back to Catalog
         </Link>
 
@@ -126,7 +126,7 @@ const BookDetails = () => {
           </div>
         </div>
       </div>
-    </MainLayout>
+    </MemberLayout>
   );
 };
 

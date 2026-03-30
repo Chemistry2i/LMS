@@ -1,38 +1,16 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  BookOpen,
-  Book, 
-  Clock, 
-  DollarSign, 
-  Bell, 
   Search, 
-  User,
-  GraduationCap,
-  LogOut,
-  ChevronDown,
-  Filter,
-  Settings,
-  History
+  Filter
 } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
-import { Link } from 'react-router-dom';
+import MemberLayout from './MemberLayout';
 import BookCard from './BookCard';
 
 const MemberPortal = () => {
-  const { user, logout } = useAuth();
-  const { isDark } = useTheme();
-  const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [activeFilter, setActiveCategory] = useState('All');
-
-  const memberDetails = {
-    studentId: user?.studentId || "240080737",
-    program: user?.program || "Bachelor of Science in Computer Science",
-    yearOfStudy: "Year 2, Semester 2",
-  };
 
   const books = [
     { id: 1, title: 'Things Fall Apart', author: 'Chinua Achebe', category: 'Fiction', status: 'Available', fine_per_day: 500 },
@@ -43,92 +21,21 @@ const MemberPortal = () => {
     { id: 6, title: 'Tropical Fish', author: 'Doreen Baingana', category: 'Fiction', status: 'Available', fine_per_day: 500 },
   ];
 
-  const filteredBooks = books.filter(b => 
-    (selectedCategory === 'All' || b.category === selectedCategory) &&
-    (b.title.toLowerCase().includes(searchQuery.toLowerCase()) || b.author.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  const filteredBooks = books
+    .filter(b => 
+      (selectedCategory === 'All' || b.category === selectedCategory) &&
+      (b.title.toLowerCase().includes(searchQuery.toLowerCase()) || b.author.toLowerCase().includes(searchQuery.toLowerCase()))
+    )
+    .sort((a, b) => {
+      if (a.status === 'Available' && b.status !== 'Available') return -1;
+      if (a.status !== 'Available' && b.status === 'Available') return 1;
+      return 0;
+    });
 
   return (
-    <div className={`min-h-screen ${isDark ? 'dark' : ''} bg-slate-50 dark:bg-slate-950 font-outfit`}>
-      {/* Transparent Navigation */}
-      <nav className="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-sky-600 rounded-lg flex items-center justify-center">
-              <BookOpen className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-bold text-slate-900 dark:text-white">LMS</span>
-          </Link>
-
-          <div className="flex items-center gap-4">
-            <button className="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full relative">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
-            </button>
-            
-            <div className="relative">
-              <button 
-                onClick={() => setIsAccountOpen(!isAccountOpen)}
-                className="flex items-center gap-3 p-1 pr-3 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
-              >
-                <div className="w-8 h-8 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center font-bold text-sm">
-                  {user?.username?.[0].toUpperCase()}
-                </div>
-                <span className="text-sm font-bold text-slate-700 dark:text-slate-200 hidden sm:inline">{user?.username}</span>
-                <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${isAccountOpen ? 'rotate-180' : ''}`} />
-              </button>
-
-              {/* KYU Space Style Dropdown */}
-              {isAccountOpen && (
-                <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden animate-fade-in">
-                  <div className="p-6 bg-gradient-to-br from-sky-600 to-blue-700 text-white">
-                    <p className="text-xs font-bold uppercase tracking-widest opacity-80 mb-1">Student Account</p>
-                    <h3 className="text-lg font-bold">{user?.first_name} {user?.last_name}</h3>
-                    <p className="text-sm opacity-90 truncate">{user?.email}</p>
-                  </div>
-                  
-                  <div className="p-4 space-y-4">
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
-                        <p className="text-[10px] font-bold text-slate-400 uppercase">Loans</p>
-                        <p className="text-lg font-bold text-sky-600">3</p>
-                      </div>
-                      <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
-                        <p className="text-[10px] font-bold text-slate-400 uppercase">Fines</p>
-                        <p className="text-lg font-bold text-rose-600">2.5k</p>
-                      </div>
-                    </div>
-
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-3 p-2 text-sm text-slate-600 dark:text-slate-400">
-                        <GraduationCap className="w-4 h-4" /> <span>{memberDetails.studentId}</span>
-                      </div>
-                      <div className="flex items-center gap-3 p-2 text-sm text-slate-600 dark:text-slate-400">
-                        <Book className="w-4 h-4" /> <span className="truncate">{memberDetails.program}</span>
-                      </div>
-                    </div>
-
-                    <div className="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-1">
-                      <Link to="/settings" className="flex items-center gap-3 p-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg">
-                        <Settings className="w-4 h-4" /> Account Settings
-                      </Link>
-                      <Link to="/borrowing-history" className="flex items-center gap-3 p-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg">
-                        <History className="w-4 h-4" /> Borrowing History
-                      </Link>
-                      <button onClick={logout} className="w-full flex items-center gap-3 p-2 text-sm text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg">
-                        <LogOut className="w-4 h-4" /> Logout
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </nav>
-
+    <MemberLayout>
       {/* Hero Section with Search */}
-      <div className="relative h-[550px] flex items-center justify-center overflow-hidden pt-16">
+      <div className="relative h-[500px] flex items-center justify-center overflow-hidden -mt-16">
         {/* Background Image with Overlay */}
         <div className="absolute inset-0 z-0">
           <motion.img
@@ -142,12 +49,12 @@ const MemberPortal = () => {
           <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/60 to-slate-50 dark:to-slate-950 backdrop-blur-[1px]"></div>
         </div>
 
-        <div className="relative z-10 w-full max-w-5xl px-4 text-center space-y-10 animate-fade-in-up">
+        <div className="relative z-10 w-full max-w-5xl px-4 text-center space-y-12 animate-fade-in-up">
           <div>
-            <h2 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-[0.15em] uppercase leading-tight">
+            <h1 className="text-4xl md:text-6xl lg:text-5xl font-black text-white mt-12 mb-6 tracking-wider leading-tight">
               Explore the Universe of Knowledge
-            </h2>
-            <p className="text-xl text-slate-200 font-medium max-w-2xl mx-auto leading-relaxed opacity-90">
+            </h1>
+            <p className="text-base md:text-lg text-slate-200 font-medium max-w-2xl mx-auto leading-tight opacity-90">
               Access thousands of academic resources, research journals, and local literature at your fingertips.
             </p>
           </div>
@@ -185,12 +92,50 @@ const MemberPortal = () => {
         </div>
       </div>
 
+      {/* Quick Summary Dashboard - New Adjustments */}
+      {/*<div className="max-w-7xl mx-auto px-4 -mt-16 relative z-20">
+        <div className="bg-white dark:bg-slate-900 rounded-full shadow-xl border border-slate-100 dark:border-slate-800 py-6 px-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-sky-100 dark:bg-sky-900/30 rounded-2xl flex items-center justify-center text-sky-600">
+              <BookOpen className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Active Loans</p>
+              <p className="text-2xl font-black text-slate-900 dark:text-white">3 Books</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-4 border-l-0 md:border-l border-slate-100 dark:border-slate-800 md:pl-8">
+            <div className="w-12 h-12 bg-rose-100 dark:bg-rose-900/30 rounded-2xl flex items-center justify-center text-rose-600">
+              <DollarSign className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Fines</p>
+              <p className="text-2xl font-black text-slate-900 dark:text-white">UGX 2,500</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4 border-l-0 md:border-l border-slate-100 dark:border-slate-800 md:pl-8">
+            <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-2xl flex items-center justify-center text-amber-600">
+              <Clock className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Due Soon</p>
+              <p className="text-2xl font-black text-slate-900 dark:text-white">1 Item</p>
+            </div>
+          </div>
+        </div>
+      </div> */}
+
       {/* Main Browse Section */}
       <main className="max-w-7xl mx-auto px-4 py-20">
-        <div className="flex items-center justify-between mb-10">
-          <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
-            {searchQuery ? `Search Results (${filteredBooks.length})` : 'Popular in Catalog'}
-          </h2>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+          <div>
+            <h2 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
+              {searchQuery ? `Search Results (${filteredBooks.length})` : 'Explore the Catalog'}
+            </h2>
+            <p className="text-slate-500 font-medium mt-1">Discover academic resources and literature at your convenience.</p>
+          </div>
           <div className="flex gap-2">
             {['All', 'Available', 'Recently Added'].map(tag => (
               <button 
@@ -210,7 +155,7 @@ const MemberPortal = () => {
 
         <motion.div 
           layoutId="book-grid"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
           <AnimatePresence mode="popLayout">
             {filteredBooks.map(book => (
@@ -238,17 +183,7 @@ const MemberPortal = () => {
           </div>
         )}
       </main>
-
-      {/* Simple Footer */}
-      <footer className="max-w-7xl mx-auto px-4 py-12 border-t border-slate-200 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6 text-xs font-bold text-slate-400 uppercase tracking-widest">
-        <p>© 2024 Kyambogo University Library Services</p>
-        <div className="flex gap-6">
-          <Link to="/faq" className="hover:text-sky-600">Help Center</Link>
-          <Link to="/terms" className="hover:text-sky-600">Privacy Policy</Link>
-          <Link to="/contact" className="hover:text-sky-600">Contact</Link>
-        </div>
-      </footer>
-    </div>
+    </MemberLayout>
   );
 };
 
