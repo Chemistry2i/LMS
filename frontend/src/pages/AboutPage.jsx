@@ -1,6 +1,6 @@
 import React from 'react';
 import { BookOpen, Users, Award, Globe, Heart, Zap } from 'lucide-react';
-import MainLayout from './MainLayout';
+// import MainLayout from './MainLayout';
 import WelcomeBanner from '../components/WelcomeBanner';
 import Breadcrumb from '../components/Breadcrumb';
 
@@ -66,8 +66,8 @@ const AboutPage = () => {
   ];
 
   return (
-    <MainLayout>
-      <div className="space-y-12 animate-fade-in max-w-4xl">
+    <>
+      <div className="space-y-12 animate-fade-in max-w-4xl mx-auto py-10 px-4 md:px-0">
         <WelcomeBanner
           userName="About Our Library"
           userRole="member"
@@ -222,7 +222,7 @@ const AboutPage = () => {
           </div>
         </div>
       </div>
-    </MainLayout>
+    </>
   );
 };
 
