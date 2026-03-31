@@ -21,7 +21,7 @@ const SuspendedMembersPageContent = () => {
       name: 'Elena Martinez',
       email: 'elena@email.com',
       phone: '+256706789012',
-      membershipDate: '2024-01-20',
+      membershipDate: '2026-01-20',
       suspensionDate: '2025-02-15',
       suspensionReason: 'Lost books not replaced',
       daysLeft: 44,

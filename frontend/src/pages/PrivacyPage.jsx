@@ -5,7 +5,7 @@ import WelcomeBanner from '../components/WelcomeBanner';
 import Breadcrumb from '../components/Breadcrumb';
 
 const PrivacyPage = () => {
-  const lastUpdated = new Date(2024, 8, 1);
+  const lastUpdated = new Date(2026, 8, 1);
 
   const sections = [
     {

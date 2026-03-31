@@ -12,7 +12,7 @@ const MyLibrary = () => {
       author: 'Chinua Achebe', 
       category: 'Fiction', 
       status: 'Borrowed', 
-      dueDate: '2024-04-15',
+      dueDate: '2026-04-15',
       fine_per_day: 500 
     },
     { 
@@ -21,7 +21,7 @@ const MyLibrary = () => {
       author: 'Jennifer Nansubuga Makumbi', 
       category: 'Luganda Literature', 
       status: 'Borrowed', 
-      dueDate: '2024-04-10',
+      dueDate: '2026-04-10',
       fine_per_day: 500 
     },
   ];

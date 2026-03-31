@@ -149,7 +149,7 @@ const AddBookModal = ({ isOpen, onClose, onSubmit, isLoading }) => {
               name="publication_year"
               value={formData.publication_year}
               onChange={handleChange}
-              placeholder="e.g. 2024"
+              placeholder="e.g. 2026"
               className="w-full px-4 py-2 border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
           </div>

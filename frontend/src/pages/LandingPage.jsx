@@ -271,7 +271,7 @@ const LandingPage = () => {
             ))}
           </div>
           <div className="border-t border-slate-100 dark:border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-xs text-muted">&copy; 2024 LMS Uganda. All rights reserved.</p>
+            <p className="text-xs text-muted">&copy; 2026 LMS Uganda. All rights reserved.</p>
             <div className="flex gap-8 text-xs text-muted">
               <a href="#" className="hover:text-sky-600 transition-smooth">Privacy Policy</a>
               <a href="#" className="hover:text-sky-600 transition-smooth">Terms of Service</a>

@@ -310,7 +310,7 @@ function Header() {
 
 ## 📄 License
 
-MIT © 2024 LMS Project
+MIT © 2026 LMS Project
 
 ## 🙏 Credits
 

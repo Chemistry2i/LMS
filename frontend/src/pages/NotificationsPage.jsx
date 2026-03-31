@@ -12,7 +12,7 @@ const NotificationsPage = () => {
       id: 1,
       type: 'return_reminder',
       title: 'Book Return Reminder',
-      message: 'Please return "The Midnight Library" before June 30, 2024',
+      message: 'Please return "The Midnight Library" before June 30, 2026',
       timestamp: new Date(Date.now() - 2 * 3600000),
       read: false,
       icon: Clock,
