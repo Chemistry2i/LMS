@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Search, 
-  Filter
+  Filter,
+  Download
 } from 'lucide-react';
 import LibraryHeroImage from '../assets/images/LibraryHeroImage.jpg';
 import MemberLayout from './MemberLayout';
@@ -52,7 +53,8 @@ const MemberPortal = () => {
           fine_per_day: 500, 
           createdAt: b.created_at,
           cover_url: b.cover_url ? `${ASSET_URL}${b.cover_url}` : null,
-          description: b.description
+          description: b.description,
+          file_url: b.book_file_url ? `${ASSET_URL}${b.book_file_url}` : null
         }));
 
         setBooks(mappedBooks);
@@ -275,6 +277,17 @@ const MemberPortal = () => {
               {/* Book description or reviews */}
               <p className="text-slate-500 dark:text-slate-400 mb-6">{selectedBook.description || 'No description available for this title.'}</p>
               <div className="flex justify-end gap-2">
+                {selectedBook.file_url && (
+                  <a
+                    href={selectedBook.file_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download
+                    className="px-6 py-2 rounded-full font-bold text-xs bg-emerald-600 text-white hover:bg-emerald-700 transition-all flex items-center gap-2"
+                  >
+                    <Download className="w-4 h-4" /> Download
+                  </a>
+                )}
                 {selectedBook.status === 'available' ? (
                   <button
                     className="px-6 py-2 rounded-full font-bold text-xs bg-sky-600 text-white hover:bg-sky-700 transition-all"
