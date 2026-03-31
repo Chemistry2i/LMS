@@ -85,13 +85,13 @@ const BooksPageContent = () => {
       // Refresh books from backend
       const booksRes = await getBooks();
       const catMap = {};
-      categories.forEach(cat => { catMap[cat.category_id] = cat.name; });
+      categories.forEach(cat => { catMap[cat.category_id] = cat.category_name; });
       const mappedBooks = booksRes.map(b => ({
         id: b.book_id,
         title: b.title,
         isbn: b.isbn,
         author: b.author,
-        category: catMap[b.category_id] || b.category_id,
+        category: b.category_name || catMap[b.category_id] || b.category_id,
         copies: b.total_copies,
         available: b.available_copies,
         status: b.available_copies === 0 ? 'unavailable' : (b.available_copies < 2 ? 'low-stock' : 'available'),
@@ -199,7 +199,7 @@ const BooksPageContent = () => {
       // Refresh books from backend
       const booksRes = await getBooks();
       const catMap = {};
-      categories.forEach(cat => { catMap[cat.category_id] = cat.name; });
+      categories.forEach(cat => { catMap[cat.category_id] = cat.category_name; });
       const mappedBooks = booksRes.map(b => ({
         id: b.book_id,
         title: b.title,

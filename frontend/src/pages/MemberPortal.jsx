@@ -11,6 +11,8 @@ import Modal from '../components/Modal';
 import { getBooks } from '../services/bookService';
 import { getCategories } from '../services/categoryService';
 
+// Base URL for backend assets
+const ASSET_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
 const MemberPortal = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -46,10 +48,10 @@ const MemberPortal = () => {
           title: b.title,
           author: b.author,
           category: catMap[b.category_id] || 'Uncategorized',
-          status: b.available_copies > 0 ? 'Available' : 'Borrowed',
+          status: b.available_copies > 0 ? 'available' : 'borrowed',
           fine_per_day: 500, 
           createdAt: b.created_at,
-          cover_url: b.cover_url,
+          cover_url: b.cover_url ? `${ASSET_URL}${b.cover_url}` : null,
           description: b.description
         }));
 
@@ -75,7 +77,7 @@ const MemberPortal = () => {
   );
 
   if (activeFilter === 'Available') {
-    filteredBooks = filteredBooks.filter(b => b.status === 'Available');
+    filteredBooks = filteredBooks.filter(b => b.status === 'available');
   } else if (activeFilter === 'Recently Added') {
     filteredBooks = filteredBooks
       .slice()
@@ -84,8 +86,8 @@ const MemberPortal = () => {
   } else {
     // Default: sort so available books come first
     filteredBooks = filteredBooks.sort((a, b) => {
-      if (a.status === 'Available' && b.status !== 'Available') return -1;
-      if (a.status !== 'Available' && b.status === 'Available') return 1;
+      if (a.status === 'available' && b.status !== 'available') return -1;
+      if (a.status !== 'available' && b.status === 'available') return 1;
       return 0;
     });
   }
@@ -267,13 +269,13 @@ const MemberPortal = () => {
               <p className="text-slate-600 dark:text-slate-300 mb-1">By <span className="font-semibold">{selectedBook.author}</span></p>
               <p className="text-xs text-slate-400 mb-4">Category: {selectedBook.category}</p>
               <div className="mb-4">
-                <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold mr-2 ${selectedBook.status === 'Available' ? 'bg-green-100 text-green-700' : 'bg-rose-100 text-rose-700'}`}>{selectedBook.status}</span>
+                <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold mr-2 uppercase ${selectedBook.status === 'available' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>{selectedBook.status}</span>
                 <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-sky-100 text-sky-700">UGX {selectedBook.fine_per_day} / day</span>
               </div>
               {/* Book description or reviews */}
-              <p className="text-slate-500 dark:text-slate-400 mb-6">A captivating book that explores important themes. {/* Replace with real description or reviews */}</p>
+              <p className="text-slate-500 dark:text-slate-400 mb-6">{selectedBook.description || 'No description available for this title.'}</p>
               <div className="flex justify-end gap-2">
-                {selectedBook.status === 'Available' ? (
+                {selectedBook.status === 'available' ? (
                   <button
                     className="px-6 py-2 rounded-full font-bold text-xs bg-sky-600 text-white hover:bg-sky-700 transition-all"
                     onClick={() => alert('Borrowed!')}
