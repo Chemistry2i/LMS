@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Users, BookOpen, AlertCircle, Plus, FileText, Database, History, TrendingUp, Banknote, Settings, BarChart3, DollarSign, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -20,49 +20,75 @@ import {
   Area,
   Legend
 } from 'recharts';
+import * as dashboardService from '../services/dashboardService';
+
 
 const LibrarianDashboard = () => {
   const { user } = useAuth();
 
-  const stats = [
-    { label: 'Total Books', value: '1,284', icon: BookOpen, color: 'text-sky-600', bg: 'bg-sky-50' },
-    { label: 'Active Members', value: '452', icon: Users, color: 'text-accent-600', bg: 'bg-accent-50' },
-    { label: 'Pending Returns', value: '12', icon: AlertCircle, color: 'text-amber-600', bg: 'bg-amber-50' },
-    { label: 'Monthly Growth', value: '+14%', icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-  ];
-
-
-
-  const categoryData = [
-    { name: 'Fiction', value: 450 },
-    { name: 'Academic', value: 300 },
-    { name: 'Luganda', value: 250 },
-    { name: 'History', value: 150 },
-    { name: 'Tech', value: 134 },
-  ];
-
-  const revenueData = [
-    { month: 'Jan', amount: 120000 },
-    { month: 'Feb', amount: 150000 },
-    { month: 'Mar', amount: 180000 },
-    { month: 'Apr', amount: 240000 },
-    { month: 'May', amount: 210000 },
-    { month: 'Jun', amount: 280000 },
-    { month: 'Jul', amount: 350000 },
-  ];
-
-  const chartData = [
-    { name: 'Jan', borrows: 400 },
-    { name: 'Feb', borrows: 300 },
-    { name: 'Mar', borrows: 600 },
-    { name: 'Apr', borrows: 800 },
-    { name: 'May', borrows: 500 },
-    { name: 'Jun', borrows: 900 },
-    { name: 'Jul', borrows: 1100 },
-  ];
+  const [stats, setStats] = useState([
+    { label: 'Total Books', value: '-', icon: BookOpen, color: 'text-sky-600', bg: 'bg-sky-50' },
+    { label: 'Active Members', value: '-', icon: Users, color: 'text-accent-600', bg: 'bg-accent-50' },
+    { label: 'Pending Returns', value: '-', icon: AlertCircle, color: 'text-amber-600', bg: 'bg-amber-50' },
+    { label: 'Monthly Growth', value: '-', icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+  ]);
+  const [categoryData, setCategoryData] = useState([]);
+  const [revenueData, setRevenueData] = useState([]);
+  const [chartData, setChartData] = useState([]);
+  const [overview, setOverview] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const COLORS = ['#0ea5e9', '#3b82f6', '#6366f1', '#8b5cf6', '#a855f7'];
 
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+    Promise.all([
+      dashboardService.getDashboardOverview(),
+      dashboardService.getCategoryStats(),
+      dashboardService.getBorrowingActivity(7),
+      dashboardService.getCollectionGrowth(7),
+      dashboardService.getOverdueBooks(),
+      dashboardService.getMemberStats(),
+    ])
+      .then(([overviewData, categories, activity, growth, overdueBooks, memberStats]) => {
+        setOverview(overviewData || {});
+        setStats([
+          { label: 'Total Books', value: overviewData?.total_books?.toLocaleString() ?? '0', icon: BookOpen, color: 'text-sky-600', bg: 'bg-sky-50' },
+          { label: 'Active Members', value: overviewData?.total_members?.toLocaleString() ?? '0', icon: Users, color: 'text-accent-600', bg: 'bg-accent-50' },
+          { label: 'Pending Returns', value: overdueBooks?.overdueBooks?.length ?? '0', icon: AlertCircle, color: 'text-amber-600', bg: 'bg-amber-50' },
+          { label: 'Monthly Growth', value: overviewData?.monthlyGrowth !== undefined ? `+${overviewData.monthlyGrowth}%` : '+0%', icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+          { label: 'Active Categories', value: overviewData?.total_categories?.toLocaleString() ?? '0', icon: Database, color: 'text-blue-600', bg: 'bg-blue-50' },
+        ]);
+        setCategoryData(categories?.stats?.map(cat => ({ name: cat.category_name, value: cat.total_books })) ?? []);
+        setChartData(activity?.activity?.map(item => ({ name: item.month || item.date, borrows: item.count })) ?? []);
+        setRevenueData(growth?.growth ?? []);
+      })
+      .catch((err) => {
+        setError('Failed to load dashboard data');
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <MainLayout>
+        <div className="flex justify-center items-center h-96">
+          <span className="text-lg text-sky-600 font-semibold">Loading dashboard...</span>
+        </div>
+      </MainLayout>
+    );
+  }
+  if (error) {
+    return (
+      <MainLayout>
+        <div className="flex justify-center items-center h-96">
+          <span className="text-lg text-red-600 font-semibold">{error}</span>
+        </div>
+      </MainLayout>
+    );
+  }
   return (
     <MainLayout>
       <div className="animate-fade-in">
@@ -145,7 +171,7 @@ const LibrarianDashboard = () => {
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-sm text-muted uppercase tracking-wide mb-2">Pending Tasks</p>
-                <h3 className="text-4xl font-bold text-sky-600">8</h3>
+                <h3 className="text-4xl font-bold text-sky-600">{overview?.pending_tasks ?? 0}</h3>
                 <p className="text-xs text-muted mt-3">Books waiting for approval</p>
               </div>
               <BookOpen className="w-12 h-12 text-sky-100 dark:text-sky-900/30" />
@@ -155,7 +181,7 @@ const LibrarianDashboard = () => {
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-sm text-muted uppercase tracking-wide mb-2">Active Categories</p>
-                <h3 className="text-4xl font-bold text-blue-600">24</h3>
+                <h3 className="text-4xl font-bold text-blue-600">{overview?.total_categories ?? 0}</h3>
                 <p className="text-xs text-muted mt-3">Well-organized collection</p>
               </div>
               <Database className="w-12 h-12 text-blue-100 dark:text-blue-900/30" />
@@ -165,7 +191,7 @@ const LibrarianDashboard = () => {
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-sm text-muted uppercase tracking-wide mb-2">Content Quality</p>
-                <h3 className="text-4xl font-bold text-emerald-600">94%</h3>
+                <h3 className="text-4xl font-bold text-emerald-600">{overview?.content_quality ?? '94%'}</h3>
                 <p className="text-xs text-muted mt-3">Catalog completeness</p>
               </div>
               <TrendingUp className="w-12 h-12 text-emerald-100 dark:text-emerald-900/30" />
@@ -251,7 +277,7 @@ const LibrarianDashboard = () => {
                   />
                   <Area 
                     type="monotone" 
-                    dataKey="amount" 
+                    dataKey="books_added" 
                     stroke="#0ea5e9" 
                     strokeWidth={3}
                     fillOpacity={1} 

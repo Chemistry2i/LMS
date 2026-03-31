@@ -4,6 +4,9 @@ import DataTable from '../../components/DataTable/DataTable';
 import AddUserModal from './AddUserModal';
 import MainLayout from '../MainLayout';
 import { createUser, getUsers, updateUser, deleteUser } from '../../services/userService';
+import UserDetailsModal from './UserDetailsModal';
+import EditUserModal from './EditUserModal';
+import ConfirmationModal from '../../components/ConfirmationModal';
 
 const UsersPageContent = () => {
   const [users, setUsers] = useState([]);
@@ -93,33 +96,64 @@ const UsersPageContent = () => {
     },
   ];
 
-  // Action handlers
-  const handleViewUser = async (row) => {
-    alert(`User info:\nUsername: ${row.username || row.email}\nEmail: ${row.email}`);
-  };
+  // Modal state
+  const [viewUser, setViewUser] = useState(null);
+  const [editUser, setEditUser] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [isEditLoading, setIsEditLoading] = useState(false);
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
-  const handleEditUser = async (row) => {
-    const newFirstName = prompt('Edit first name:', row.first_name || '');
-    if (newFirstName && newFirstName !== row.first_name) {
-      try {
-        await updateUser(row.user_id || row.id, { first_name: newFirstName });
-        const res = await getUsers();
-        setUsers(res.users || []);
-      } catch (error) {
-        alert('Failed to update user.');
-      }
+  // Action handlers
+  const handleViewUser = (row) => setViewUser(row);
+
+  const handleEditUser = (row) => setEditUser(row);
+
+  const handleEditUserSubmit = async (formData) => {
+    setIsEditLoading(true);
+    try {
+      await updateUser(editUser.user_id || editUser.id, formData);
+      const res = await getUsers();
+      const mapped = ((res.data && res.data.items) || []).map(u => ({
+        id: u.user_id,
+        username: u.username,
+        first_name: u.first_name,
+        last_name: u.last_name,
+        email: u.email,
+        role: u.role,
+        created_at: u.created_at,
+      }));
+      setUsers(mapped);
+      setEditUser(null);
+    } catch (error) {
+      alert('Failed to update user.');
+    } finally {
+      setIsEditLoading(false);
     }
   };
 
-  const handleDeleteUser = async (row) => {
-    if (window.confirm(`Are you sure you want to delete user ${row.username || row.email}?`)) {
-      try {
-        await deleteUser(row.user_id || row.id);
-        const res = await getUsers();
-        setUsers(res.users || []);
-      } catch (error) {
-        alert('Failed to delete user.');
-      }
+  const handleDeleteUser = (row) => setDeleteTarget(row);
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteTarget) return;
+    setIsDeleteLoading(true);
+    try {
+      await deleteUser(deleteTarget.user_id || deleteTarget.id);
+      const res = await getUsers();
+      const mapped = ((res.data && res.data.items) || []).map(u => ({
+        id: u.user_id,
+        username: u.username,
+        first_name: u.first_name,
+        last_name: u.last_name,
+        email: u.email,
+        role: u.role,
+        created_at: u.created_at,
+      }));
+      setUsers(mapped);
+      setDeleteTarget(null);
+    } catch (error) {
+      alert('Failed to delete user.');
+    } finally {
+      setIsDeleteLoading(false);
     }
   };
 
@@ -178,30 +212,7 @@ const UsersPageContent = () => {
             {users.length}
           </p>
         </div>
-        <div className="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
-          <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">
-            Active
-          </p>
-          <p className="text-3xl font-bold text-emerald-600 mt-2">
-            {users.filter((u) => u.status === 'active').length}
-          </p>
-        </div>
-        <div className="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
-          <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">
-            Suspended
-          </p>
-          <p className="text-3xl font-bold text-red-600 mt-2">
-            {users.filter((u) => u.status === 'suspended').length}
-          </p>
-        </div>
-        <div className="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
-          <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">
-            Students
-          </p>
-          <p className="text-3xl font-bold text-blue-600 mt-2">
-            {users.filter((u) => u.role === 'Student').length}
-          </p>
-        </div>
+        {/* You can add more stats here if needed */}
       </div>
 
       {/* Data Table */}
@@ -209,7 +220,7 @@ const UsersPageContent = () => {
         title="Users List"
         columns={columns}
         data={users}
-        searchPlaceholder="Search users by name, email..."
+        searchPlaceholder="Search users by username, email..."
         actions={renderActions}
       />
 
@@ -219,6 +230,35 @@ const UsersPageContent = () => {
         onClose={() => setIsAddModalOpen(false)}
         onSubmit={handleAddUser}
         isLoading={isLoading}
+      />
+
+      {/* View User Modal */}
+      <UserDetailsModal
+        isOpen={!!viewUser}
+        onClose={() => setViewUser(null)}
+        user={viewUser}
+      />
+
+      {/* Edit User Modal */}
+      <EditUserModal
+        isOpen={!!editUser}
+        onClose={() => setEditUser(null)}
+        user={editUser}
+        onSubmit={handleEditUserSubmit}
+        isLoading={isEditLoading}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={!!deleteTarget}
+        title="Delete User"
+        message={deleteTarget ? `Are you sure you want to delete user '${deleteTarget.username || deleteTarget.email}'? This action cannot be undone.` : ''}
+        confirmText="Delete"
+        cancelText="Cancel"
+        isDangerous
+        isLoading={isDeleteLoading}
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={handleDeleteConfirm}
       />
     </div>
   );
