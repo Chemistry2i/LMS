@@ -125,10 +125,10 @@ const Sidebar = () => {
     { icon: BookOpen, label: 'Books', path: '/books-library'},
     {icon: Database, label: 'Categories', path: '/manage-categories' },
     { icon: BarChart3, label: 'Analytics & Reports', path: '/reports' },
-    { icon: Bookmark, label: 'My Reservations', path: '/reservations' },
-    { icon: Library, label: 'My Bookshelf', path: '/my-library' },
+    // { icon: Bookmark, label: 'My Reservations', path: '/reservations' },
+    // { icon: Library, label: 'My Bookshelf', path: '/my-library' },
     // { icon: History, label: 'Borrowing History', path: '/borrowing-history' },
-    { icon: Heart, label: 'Wishlist', path: '/wishlist' },
+    // { icon: Heart, label: 'Wishlist', path: '/wishlist' },
     { icon: HelpCircle, label: 'Help & FAQ', path: '/faq' },
   ];
 

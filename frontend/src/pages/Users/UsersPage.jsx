@@ -159,26 +159,29 @@ const UsersPageContent = () => {
 
   // Action buttons for each row
   const renderActions = (row) => (
-    <>
+    <div className="flex gap-2">
       <button
-        className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors text-blue-600 dark:text-blue-400"
+        className="flex items-center gap-1 px-2 py-1 border border-blue-400 dark:border-blue-500 rounded-lg transition-colors text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20"
         onClick={() => handleViewUser(row)}
       >
         <Eye className="w-4 h-4" />
+        <span className="text-xs font-medium">View</span>
       </button>
       <button
-        className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-600 dark:text-slate-400"
+        className="flex items-center gap-1 px-2 py-1 border border-slate-400 dark:border-slate-500 rounded-lg transition-colors text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
         onClick={() => handleEditUser(row)}
       >
         <Edit2 className="w-4 h-4" />
+        <span className="text-xs font-medium">Edit</span>
       </button>
       <button
-        className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors text-red-600 dark:text-red-400"
+        className="flex items-center gap-1 px-2 py-1 border border-red-400 dark:border-red-500 rounded-lg transition-colors text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
         onClick={() => handleDeleteUser(row)}
       >
         <Trash2 className="w-4 h-4" />
+        <span className="text-xs font-medium">Delete</span>
       </button>
-    </>
+    </div>
   );
 
   return (

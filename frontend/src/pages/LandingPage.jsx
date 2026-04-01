@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { 
   ChevronDown, BookOpen, Users, Zap, Globe, Star, ArrowRight, 
   Search, BarChart3, Heart, Bell, Mail, Phone, MapPin, 
   Sparkles, Check, HelpCircle, Sun, Moon
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import LibraryHeroImage from '../assets/images/LibraryHeroImage.jpg';
 
 const featureColors = {
   sky: {
@@ -65,37 +67,142 @@ const Navbar = ({ isDark, toggleTheme, isMenuOpen, setIsMenuOpen }) => (
 );
 
 const Hero = () => (
-  <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-50 to-blue-50 dark:from-slate-900 dark:to-slate-800 pt-16">
+  <motion.section 
+    className="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat pt-16 relative overflow-hidden"
+    style={{
+      backgroundImage: `linear-gradient(135deg, rgba(15, 23, 42, 0.85), rgba(30, 41, 59, 0.85)), url(${LibraryHeroImage})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+    }}
+    animate={{ 
+      backgroundSize: ['cover', '110%', 'cover'],
+    }}
+    transition={{ 
+      duration: 15, 
+      repeat: Infinity,
+      ease: "easeInOut"
+    }}
+  >
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 grid md:grid-cols-2 gap-12 items-center">
-      <div className="space-y-6 animate-fade-in-up">
-        <span className="px-4 py-2 bg-sky-100 dark:bg-sky-900 text-sky-700 dark:text-sky-300 rounded-full text-xs font-bold uppercase tracking-wider">✨ Next-Gen Library Management</span>
-        <h1 className="heading-lg">Discover, Borrow & Manage <span className="bg-gradient-to-r from-sky-600 to-blue-500 bg-clip-text text-transparent">Your Library</span></h1>
-        <p className="text-lg text-slate-600 dark:text-slate-400 max-w-xl">Combining institutional power with modern analytics. A beautiful, intuitive platform for librarians and members in Uganda.</p>
-        <div className="flex flex-col sm:flex-row gap-4 pt-4">
-          <Link to="/register" className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-sky-500 to-blue-600 text-white rounded-xl font-bold hover:shadow-lg hover:scale-105 transition-smooth">Start Free Trial <ArrowRight className="ml-2 w-5 h-5" /></Link>
-          <a href="#features" className="inline-flex items-center justify-center px-8 py-4 border-2 border-sky-500 text-sky-600 dark:text-sky-400 rounded-xl font-bold hover:bg-sky-50 dark:hover:bg-sky-900 transition-smooth">Learn More</a>
-        </div>
-        <div className="pt-8 border-t border-slate-200 dark:border-slate-700">
+      {/* Left Content */}
+      <motion.div 
+        className="space-y-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <motion.span 
+          className="px-4 py-2 bg-sky-100 dark:bg-sky-900 text-sky-700 dark:text-sky-300 rounded-full text-xs font-bold uppercase tracking-wider inline-block"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.1, duration: 0.5 }}
+        >
+          ✨ Next-Gen Library Management
+        </motion.span>
+
+        <motion.h1 
+          className="heading-lg text-white"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.6 }}
+        >
+          Discover, Borrow & Manage <span className="bg-gradient-to-r from-sky-400 to-blue-300 bg-clip-text text-transparent">Your Library</span>
+        </motion.h1>
+
+        <motion.p 
+          className="text-lg text-slate-200 max-w-xl"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.6 }}
+        >
+          Combining institutional power with modern analytics. A beautiful, intuitive platform for librarians and members in Uganda.
+        </motion.p>
+
+        <motion.div 
+          className="flex flex-col sm:flex-row gap-4 pt-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.6 }}
+        >
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Link to="/register" className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-sky-500 to-blue-600 text-white rounded-xl font-bold hover:shadow-lg transition-smooth">
+              Start Free Trial <ArrowRight className="ml-2 w-5 h-5" />
+            </Link>
+          </motion.div>
+          <motion.a 
+            href="#features"
+            className="inline-flex items-center justify-center px-8 py-4 border-2 border-sky-300 text-sky-300 rounded-xl font-bold hover:bg-sky-500 hover:bg-opacity-20 transition-smooth"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Learn More
+          </motion.a>
+        </motion.div>
+
+        <motion.div 
+          className="pt-8 border-t border-white/20"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.6 }}
+        >
           <div className="flex gap-1 mb-1">{[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />)}</div>
-          <p className="text-sm text-slate-600 dark:text-slate-400">Trusted by 200+ local libraries across Kampala</p>
-        </div>
-      </div>
-      <div className="hidden md:block relative">
-        <div className="absolute inset-0 bg-gradient-to-r from-sky-500 to-blue-500 rounded-2xl blur-3xl opacity-20"></div>
-        <div className="relative bg-white/50 dark:bg-slate-800/50 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-white/20">
+          <p className="text-sm text-slate-300">Trusted by 200+ local libraries across Kampala</p>
+        </motion.div>
+      </motion.div>
+
+      {/* Right Card - Floating Animation */}
+      <motion.div 
+        className="hidden md:block relative"
+        initial={{ opacity: 0, scale: 0.8, y: 50 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.8 }}
+      >
+        <motion.div 
+          className="absolute inset-0 bg-gradient-to-r from-sky-500 to-blue-500 rounded-2xl blur-3xl opacity-20"
+          animate={{ scale: [1, 1.05, 1] }}
+          transition={{ duration: 4, repeat: Infinity }}
+        />
+        <motion.div 
+          className="relative bg-gradient-to-br from-white/95 to-blue-50/95 dark:from-slate-700/95 dark:to-slate-800/95 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-white/40 dark:border-slate-600/40"
+          animate={{ y: [0, -10, 0] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+        >
           <div className="space-y-4">
-            <div className="h-3 bg-sky-300 dark:bg-sky-600 rounded w-32"></div>
-            <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded w-full"></div>
-            <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded w-full"></div>
+            <motion.div 
+              className="h-3 bg-gradient-to-r from-sky-400 to-blue-500 rounded-full w-32"
+              animate={{ width: ["80%", "100%", "80%"] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            />
+            <motion.div 
+              className="h-2 bg-sky-200 dark:bg-slate-600 rounded w-full"
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            />
+            <motion.div 
+              className="h-2 bg-sky-200 dark:bg-slate-600 rounded w-5/6"
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 2, repeat: Infinity, delay: 0.3 }}
+            />
             <div className="grid grid-cols-2 gap-4 pt-4">
-              <div className="h-12 bg-gradient-to-r from-sky-600 to-blue-500 rounded"></div>
-              <div className="h-12 bg-sky-100 dark:bg-sky-900 rounded"></div>
+              <motion.div 
+                className="h-12 bg-gradient-to-r from-sky-500 to-blue-600 rounded-lg shadow-lg"
+                animate={{ scale: [1, 1.08, 1] }}
+                transition={{ duration: 2.5, repeat: Infinity, delay: 0.2 }}
+              />
+              <motion.div 
+                className="h-12 bg-sky-100 dark:bg-sky-600 rounded-lg shadow-sm"
+                animate={{ scale: [1, 1.08, 1] }}
+                transition={{ duration: 2.5, repeat: Infinity, delay: 0.5 }}
+              />
             </div>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </div>
-  </section>
+  </motion.section>
 );
 
 const Features = () => (

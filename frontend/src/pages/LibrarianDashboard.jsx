@@ -110,7 +110,7 @@ const LibrarianDashboard = () => {
         />
 
         <div className="flex flex-wrap gap-3 mb-10">
-          <Link to="/manage-books" className="px-6 py-3 bg-sky-600 text-white rounded-lg flex items-center gap-2 hover:bg-sky-700 transition-smooth font-semibold shadow-lg hover:shadow-xl">
+          <Link to="/books-library" className="px-6 py-3 bg-sky-600 text-white rounded-lg flex items-center gap-2 hover:bg-sky-700 transition-smooth font-semibold shadow-lg hover:shadow-xl">
             <Plus className="w-5 h-5" /> Add New Book
           </Link>
           <Link to="/manage-categories" className="px-6 py-3 bg-blue-600 text-white rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-smooth font-semibold">
@@ -141,7 +141,7 @@ const LibrarianDashboard = () => {
 
         {/* Quick Actions Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-10">
-          <Link to="/manage-books" className="card group hover:border-sky-500 hover:shadow-lg transition-smooth">
+          <Link to="/books-library" className="card group hover:border-sky-500 hover:shadow-lg transition-smooth">
             <div className="flex items-center gap-4">
               <div className="p-4 bg-sky-100 dark:bg-sky-900/20 rounded-xl group-hover:bg-sky-600 group-hover:text-white transition-smooth">
                 <BookOpen className="w-7 h-7" />

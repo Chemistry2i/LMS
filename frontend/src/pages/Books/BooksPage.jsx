@@ -158,29 +158,35 @@ const BooksPageContent = () => {
   ];
 
   const renderActions = (row) => (
-    <>
+    <div className="flex gap-2">
       <button
-        className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors text-blue-600 dark:text-blue-400"
+        className="flex items-center gap-1 border border-blue-500 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-xs font-medium"
         onClick={() => setViewBook(row)}
+        title="View"
       >
         <Eye className="w-4 h-4" />
+        <span>View</span>
       </button>
       <button
-        className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-600 dark:text-slate-400"
+        className="flex items-center gap-1 border border-slate-500 text-slate-600 dark:text-slate-400 px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors text-xs font-medium"
         onClick={() => {
           setEditBook(row);
           setIsEditModalOpen(true);
         }}
+        title="Edit"
       >
         <Edit2 className="w-4 h-4" />
+        <span>Edit</span>
       </button>
       <button
-        className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors text-red-600 dark:text-red-400"
+        className="flex items-center gap-1 border border-red-500 text-red-600 dark:text-red-400 px-2 py-1 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-xs font-medium"
         onClick={() => setDeleteTarget(row)}
+        title="Delete"
       >
         <Trash2 className="w-4 h-4" />
+        <span>Delete</span>
       </button>
-    </>
+    </div>
   );
   // Edit handler
   const handleEditBook = async (formData) => {
