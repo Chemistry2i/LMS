@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Users, BookOpen, AlertCircle, Plus, FileText, Database, History, TrendingUp, Banknote, Settings, BarChart3, DollarSign, Clock } from 'lucide-react';
+import { Users, BookOpen, AlertCircle, Plus, FileText, Database, History, TrendingUp, Banknote, Settings, BarChart3, DollarSign, Clock, Download, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import MainLayout from './MainLayout';
 import WelcomeBanner from '../components/WelcomeBanner';
+import toast from 'react-hot-toast';
 import { 
   BarChart, 
   Bar, 
@@ -22,6 +23,7 @@ import {
 } from 'recharts';
 import * as dashboardService from '../services/dashboardService';
 import borrowingService from '../services/borrowingService';
+import { exportToPDF, exportToExcel, exportToCSV } from '../utils/exportUtils';
 
 
 const LibrarianDashboard = () => {
@@ -42,6 +44,7 @@ const LibrarianDashboard = () => {
   const [error, setError] = useState(null);
 
   const COLORS = ['#0ea5e9', '#3b82f6', '#6366f1', '#8b5cf6', '#a855f7'];
+  const [exportMenuOpen, setExportMenuOpen] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -154,6 +157,62 @@ const LibrarianDashboard = () => {
           <Link to="/reports" className="px-6 py-3 border-2 border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 rounded-lg flex items-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-smooth font-semibold">
             <FileText className="w-5 h-5" /> View Reports
           </Link>
+          
+          {/* Export Dashboard Button */}
+          <div className="relative">
+            <button 
+              onClick={() => setExportMenuOpen(!exportMenuOpen)}
+              className="px-6 py-3 border-2 border-emerald-600 text-emerald-600 rounded-lg flex items-center gap-2 hover:bg-emerald-50 dark:hover:bg-slate-800 transition-smooth font-semibold"
+            >
+              <Download className="w-5 h-5" /> Export <ChevronDown className="w-4 h-4" />
+            </button>
+            
+            {exportMenuOpen && (
+              <div className="absolute left-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-lg shadow-lg z-50 border border-slate-200 dark:border-slate-700">
+                <button 
+                  onClick={() => {
+                    exportToPDF(
+                      chartData.map(item => ({ 'Day': item.name, 'Borrows': item.borrows })),
+                      [
+                        { header: 'Day', dataKey: 'Day' },
+                        { header: 'Borrows', dataKey: 'Borrows' }
+                      ],
+                      'dashboard-activity',
+                      'Dashboard Activity Report'
+                    );
+                    setExportMenuOpen(false);
+                  }}
+                  className="w-full text-left px-4 py-2 hover:bg-sky-50 dark:hover:bg-slate-700 text-sm text-slate-700 dark:text-slate-300"
+                >
+                  📄 Activity (PDF)
+                </button>
+                <button 
+                  onClick={() => {
+                    exportToExcel(
+                      chartData.map(item => ({ 'Day': item.name, 'Borrows': item.borrows })),
+                      'dashboard-activity.xlsx'
+                    );
+                    setExportMenuOpen(false);
+                  }}
+                  className="w-full text-left px-4 py-2 hover:bg-sky-50 dark:hover:bg-slate-700 text-sm text-slate-700 dark:text-slate-300"
+                >
+                  📊 Activity (Excel)
+                </button>
+                <button 
+                  onClick={() => {
+                    exportToCSV(
+                      chartData.map(item => ({ 'Day': item.name, 'Borrows': item.borrows })),
+                      'dashboard-activity'
+                    );
+                    setExportMenuOpen(false);
+                  }}
+                  className="w-full text-left px-4 py-2 hover:bg-sky-50 dark:hover:bg-slate-700 text-sm text-slate-700 dark:text-slate-300 rounded-lg"
+                >
+                  📊 Activity (CSV)
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Quick Stats */}

@@ -4,9 +4,10 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, 
   ResponsiveContainer, Cell, AreaChart, Area, ScatterChart, Scatter, ZAxis
 } from 'recharts';
-import { Calendar, Filter, Download, TrendingUp, UserCheck, BookCopy, CreditCard } from 'lucide-react';
+import { Calendar, Filter, Download, TrendingUp, UserCheck, BookCopy, CreditCard, ChevronDown } from 'lucide-react';
 import toast from 'react-hot-toast';
 import * as dashboardService from '../services/dashboardService';
+import { exportAuthorData, exportFineRecoveryData, exportInstitutionalReport } from '../utils/exportUtils';
 
 const ReportsPage = () => {
   const [dateRange, setDateRange] = useState('Last 30 Days');
@@ -17,6 +18,7 @@ const ReportsPage = () => {
   const [fineRecoveryPercent, setFineRecoveryPercent] = useState(0);
   const [loading, setLoading] = useState(true);
   const [lastRefresh, setLastRefresh] = useState(new Date());
+  const [exportMenuOpen, setExportMenuOpen] = useState(false);
 
   // Heatmap Data - Member activity pattern simulation
   const heatmapData = [
@@ -145,6 +147,28 @@ const ReportsPage = () => {
     ];
   };
 
+  // Export handlers
+  const handleExportFullReport = (format) => {
+    exportInstitutionalReport({
+      categoryStats,
+      newMembersCount,
+      fineRecoveryPercent,
+      authorData,
+      fineRecoveryData,
+    }, format);
+    setExportMenuOpen(false);
+  };
+
+  const handleExportAuthors = (format) => {
+    exportAuthorData(authorData, format);
+    setExportMenuOpen(false);
+  };
+
+  const handleExportFinancials = (format) => {
+    exportFineRecoveryData(fineRecoveryData, format);
+    setExportMenuOpen(false);
+  };
+
   // Loading state
   if (loading) {
     return (
@@ -189,9 +213,77 @@ const ReportsPage = () => {
                 <option>Year to Date</option>
               </select>
             </div>
-            <button className="btn-outline flex items-center gap-2 h-11">
-              <Download className="w-4 h-4" /> Export PDF
-            </button>
+            <div className="relative">
+              <button 
+                onClick={() => setExportMenuOpen(!exportMenuOpen)}
+                className="btn-outline flex items-center gap-2 h-11"
+              >
+                <Download className="w-4 h-4" /> Export <ChevronDown className="w-4 h-4" />
+              </button>
+              
+              {exportMenuOpen && (
+                <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-lg shadow-lg z-50 border border-slate-200 dark:border-slate-700">
+                  <div className="p-3 border-b border-slate-200 dark:border-slate-700">
+                    <p className="text-sm font-semibold text-slate-900 dark:text-white">Full Report</p>
+                  </div>
+                  <button 
+                    onClick={() => handleExportFullReport('pdf')}
+                    className="w-full text-left px-4 py-2 hover:bg-sky-50 dark:hover:bg-slate-700 text-sm text-slate-700 dark:text-slate-300"
+                  >
+                    📄 Full Report (PDF)
+                  </button>
+                  <button 
+                    onClick={() => handleExportFullReport('excel')}
+                    className="w-full text-left px-4 py-2 hover:bg-sky-50 dark:hover:bg-slate-700 text-sm text-slate-700 dark:text-slate-300"
+                  >
+                    📊 Full Report (Excel)
+                  </button>
+                  
+                  <div className="p-3 border-t border-b border-slate-200 dark:border-slate-700">
+                    <p className="text-sm font-semibold text-slate-900 dark:text-white">Author Analytics</p>
+                  </div>
+                  <button 
+                    onClick={() => handleExportAuthors('pdf')}
+                    className="w-full text-left px-4 py-2 hover:bg-sky-50 dark:hover:bg-slate-700 text-sm text-slate-700 dark:text-slate-300"
+                  >
+                    📚 Authors (PDF)
+                  </button>
+                  <button 
+                    onClick={() => handleExportAuthors('excel')}
+                    className="w-full text-left px-4 py-2 hover:bg-sky-50 dark:hover:bg-slate-700 text-sm text-slate-700 dark:text-slate-300"
+                  >
+                    📚 Authors (Excel)
+                  </button>
+                  <button 
+                    onClick={() => handleExportAuthors('csv')}
+                    className="w-full text-left px-4 py-2 hover:bg-sky-50 dark:hover:bg-slate-700 text-sm text-slate-700 dark:text-slate-300"
+                  >
+                    📚 Authors (CSV)
+                  </button>
+                  
+                  <div className="p-3 border-t border-b border-slate-200 dark:border-slate-700">
+                    <p className="text-sm font-semibold text-slate-900 dark:text-white">Financial Reports</p>
+                  </div>
+                  <button 
+                    onClick={() => handleExportFinancials('pdf')}
+                    className="w-full text-left px-4 py-2 hover:bg-sky-50 dark:hover:bg-slate-700 text-sm text-slate-700 dark:text-slate-300"
+                  >
+                    💰 Fine Recovery (PDF)
+                  </button>
+                  <button 
+                    onClick={() => handleExportFinancials('excel')}
+                    className="w-full text-left px-4 py-2 hover:bg-sky-50 dark:hover:bg-slate-700 text-sm text-slate-700 dark:text-slate-300"
+                  >
+                    💰 Fine Recovery (Excel)
+                  </button>
+                  <button 
+                    onClick={() => handleExportFinancials('csv')}
+                    className="w-full text-left px-4 py-2 hover:bg-sky-50 dark:hover:bg-slate-700 text-sm text-slate-700 dark:text-slate-300 rounded-b-lg"
+                  >
+                    💰 Fine Recovery (CSV)
+                  </button>
+                </div>
+              )}
           </div>
         </div>
 
