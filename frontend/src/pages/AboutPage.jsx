@@ -337,7 +337,7 @@ const AboutPage = () => {
                       {member.emoji}
                     </span>
                   </div>
-                  <h3 className="font-bold text-lg mb-1 text-slate-900 dark:text-white">{member.name}</h3>
+                  <h4 className="font-bold text-md mb-1 text-slate-900 dark:text-white">{member.name}</h4>
                   <p className="text-xs text-muted mb-1">{member.role}</p>
                   <p className="text-xs text-slate-600 dark:text-slate-400 mb-2 min-h-[40px]">{member.bio}</p>
                   <div className="flex gap-3 justify-center mt-2">
