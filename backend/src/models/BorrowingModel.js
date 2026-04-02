@@ -59,12 +59,16 @@ class BorrowingModel {
         await pool.query('UPDATE books SET available_copies = available_copies - 1 WHERE book_id = ?', [borrow[0].book_id]);
       }
 
-      // Log audit
-      await pool.query(
-        `INSERT INTO borrowing_audit (borrow_id, action, performed_by, new_value) 
-         VALUES (?, 'approved', ?, 'Request approved')`,
-        [borrowId, approvedByUserId]
-      );
+      // Log audit (optional - wrap in try-catch to not break approval)
+      try {
+        await pool.query(
+          `INSERT INTO borrowing_audit (borrow_id, action, performed_by, details) 
+           VALUES (?, ?, ?, ?)`,
+          [borrowId, 'approved', approvedByUserId, JSON.stringify({ status: 'Request approved' })]
+        );
+      } catch (auditError) {
+        console.error('Audit logging failed (non-critical):', auditError.message);
+      }
 
       return true;
     } catch (error) {
@@ -90,12 +94,16 @@ class BorrowingModel {
         throw new Error('Borrow request not found or already processed');
       }
 
-      // Log audit
-      await pool.query(
-        `INSERT INTO borrowing_audit (borrow_id, action, performed_by, details) 
-         VALUES (?, 'rejected', ?, ?)`,
-        [borrowId, approvedByUserId, JSON.stringify({ reason: rejectionReason })]
-      );
+      // Log audit (optional - wrap in try-catch to not break rejection)
+      try {
+        await pool.query(
+          `INSERT INTO borrowing_audit (borrow_id, action, performed_by, details) 
+           VALUES (?, ?, ?, ?)`,
+          [borrowId, 'rejected', approvedByUserId, JSON.stringify({ reason: rejectionReason })]
+        );
+      } catch (auditError) {
+        console.error('Audit logging failed (non-critical):', auditError.message);
+      }
 
       return true;
     } catch (error) {

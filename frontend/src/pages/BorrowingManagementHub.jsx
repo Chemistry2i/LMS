@@ -523,6 +523,8 @@ const ProcessReturnContent = () => {
   const [pending, setPending] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [approvingId, setApprovingId] = useState(null);
+  const [rejectingId, setRejectingId] = useState(null);
 
   useEffect(() => {
     fetchPending();
@@ -554,12 +556,16 @@ const ProcessReturnContent = () => {
   };
 
   const handleApprove = async (borrowId) => {
+    setApprovingId(borrowId);
     try {
       await borrowingService.approveBorrow(borrowId);
       toast.success('Borrow request approved');
       fetchPending();
     } catch (error) {
+      console.error('Approve error:', error);
       toast.error(error.response?.data?.message || 'Failed to approve request');
+    } finally {
+      setApprovingId(null);
     }
   };
 
@@ -567,12 +573,16 @@ const ProcessReturnContent = () => {
     const reason = prompt('Enter rejection reason:');
     if (reason === null) return;
 
+    setRejectingId(borrowId);
     try {
       await borrowingService.rejectBorrow(borrowId, reason);
       toast.success('Borrow request rejected');
       fetchPending();
     } catch (error) {
+      console.error('Reject error:', error);
       toast.error(error.response?.data?.message || 'Failed to reject request');
+    } finally {
+      setRejectingId(null);
     }
   };
 
@@ -601,13 +611,29 @@ const ProcessReturnContent = () => {
                 </div>
 
                 <div className="flex gap-2">
-                  <button onClick={() => handleApprove(request.id)} className="px-4 py-2 text-sm font-semibold bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 active:bg-emerald-700 transition-colors flex items-center gap-2 shadow-md hover:shadow-lg">
+                  <button
+                    onClick={() => handleApprove(request.id)}
+                    disabled={approvingId === request.id || rejectingId === request.id}
+                    className={`px-4 py-2 text-sm font-semibold rounded-lg transition-colors flex items-center gap-2 shadow-md ${
+                      approvingId === request.id || rejectingId === request.id
+                        ? 'bg-emerald-400 text-white opacity-75 cursor-not-allowed'
+                        : 'bg-emerald-500 text-white hover:bg-emerald-600 active:bg-emerald-700 hover:shadow-lg'
+                    }`}
+                  >
                     <CheckIcon className="w-5 h-5" />
-                    Approve
+                    {approvingId === request.id ? 'Approving...' : 'Approve'}
                   </button>
-                  <button onClick={() => handleReject(request.id)} className="px-4 py-2 text-sm font-semibold bg-red-500 text-white rounded-lg hover:bg-red-600 active:bg-red-700 transition-colors flex items-center gap-2 shadow-md hover:shadow-lg">
+                  <button
+                    onClick={() => handleReject(request.id)}
+                    disabled={approvingId === request.id || rejectingId === request.id}
+                    className={`px-4 py-2 text-sm font-semibold rounded-lg transition-colors flex items-center gap-2 shadow-md ${
+                      approvingId === request.id || rejectingId === request.id
+                        ? 'bg-red-400 text-white opacity-75 cursor-not-allowed'
+                        : 'bg-red-500 text-white hover:bg-red-600 active:bg-red-700 hover:shadow-lg'
+                    }`}
+                  >
                     <XIcon className="w-5 h-5" />
-                    Reject
+                    {rejectingId === request.id ? 'Rejecting...' : 'Reject'}
                   </button>
                 </div>
               </div>
