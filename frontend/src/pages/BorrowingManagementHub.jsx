@@ -108,6 +108,8 @@ const ActiveBorrowingsContent = () => {
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('dueDate');
   const [page, setPage] = useState(1);
+  const [returningId, setReturningId] = useState(null);
+  const [renewingId, setRenewingId] = useState(null);
   const limit = 10;
 
   useEffect(() => {
@@ -151,22 +153,34 @@ const ActiveBorrowingsContent = () => {
 
   const handleReturn = async (borrowId) => {
     if (!window.confirm('Mark this book as returned?')) return;
+    setReturningId(borrowId);
     try {
-      await borrowingService.returnBook(borrowId);
+      console.log('Returning book:', borrowId);
+      const result = await borrowingService.returnBook(borrowId);
+      console.log('Return result:', result);
       toast.success('Book returned successfully');
       fetchActiveBorrowings();
     } catch (error) {
+      console.error('Return error:', error);
       toast.error(error.response?.data?.message || 'Failed to return book');
+    } finally {
+      setReturningId(null);
     }
   };
 
   const handleRenew = async (borrowId) => {
+    setRenewingId(borrowId);
     try {
-      await borrowingService.renewBook(borrowId);
+      console.log('Renewing book:', borrowId);
+      const result = await borrowingService.renewBook(borrowId);
+      console.log('Renew result:', result);
       toast.success('Book renewed successfully');
       fetchActiveBorrowings();
     } catch (error) {
+      console.error('Renew error:', error);
       toast.error(error.response?.data?.message || 'Failed to renew book');
+    } finally {
+      setRenewingId(null);
     }
   };
 
@@ -205,13 +219,29 @@ const ActiveBorrowingsContent = () => {
                     </div>
 
                     <div className="flex gap-2">
-                      <button onClick={() => handleReturn(borrowing.id)} className="px-4 py-2 text-sm font-semibold bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 active:bg-emerald-700 transition-colors flex items-center gap-2 shadow-md hover:shadow-lg">
+                      <button
+                        onClick={() => handleReturn(borrowing.id)}
+                        disabled={returningId === borrowing.id || renewingId === borrowing.id}
+                        className={`px-4 py-2 text-sm font-semibold rounded-lg transition-colors flex items-center gap-2 shadow-md ${
+                          returningId === borrowing.id || renewingId === borrowing.id
+                            ? 'bg-emerald-400 text-white opacity-75 cursor-not-allowed'
+                            : 'bg-emerald-500 text-white hover:bg-emerald-600 active:bg-emerald-700 hover:shadow-lg'
+                        }`}
+                      >
                         <CheckIcon className="w-5 h-5" />
-                        Return
+                        {returningId === borrowing.id ? 'Returning...' : 'Return'}
                       </button>
-                      <button onClick={() => handleRenew(borrowing.id)} className="px-4 py-2 text-sm font-semibold bg-blue-500 text-white rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-colors flex items-center gap-2 shadow-md hover:shadow-lg">
+                      <button
+                        onClick={() => handleRenew(borrowing.id)}
+                        disabled={returningId === borrowing.id || renewingId === borrowing.id}
+                        className={`px-4 py-2 text-sm font-semibold rounded-lg transition-colors flex items-center gap-2 shadow-md ${
+                          returningId === borrowing.id || renewingId === borrowing.id
+                            ? 'bg-blue-400 text-white opacity-75 cursor-not-allowed'
+                            : 'bg-blue-500 text-white hover:bg-blue-600 active:bg-blue-700 hover:shadow-lg'
+                        }`}
+                      >
                         <Zap className="w-5 h-5" />
-                        Renew
+                        {renewingId === borrowing.id ? 'Renewing...' : 'Renew'}
                       </button>
                     </div>
                   </div>
@@ -651,6 +681,7 @@ const RenewBooksContent = () => {
   const [renewable, setRenewable] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [renewingId, setRenewingId] = useState(null);
 
   useEffect(() => {
     fetchRenewable();
@@ -689,12 +720,18 @@ const RenewBooksContent = () => {
   };
 
   const handleRenew = async (borrowId) => {
+    setRenewingId(borrowId);
     try {
-      await borrowingService.renewBook(borrowId);
+      console.log('Renewing book:', borrowId);
+      const result = await borrowingService.renewBook(borrowId);
+      console.log('Renew result:', result);
       toast.success('Book renewed successfully');
       fetchRenewable();
     } catch (error) {
+      console.error('Renew error:', error);
       toast.error(error.response?.data?.message || 'Failed to renew book');
+    } finally {
+      setRenewingId(null);
     }
   };
 
@@ -726,9 +763,17 @@ const RenewBooksContent = () => {
                     </div>
                   </div>
 
-                  <button onClick={() => handleRenew(book.id)} className="px-4 py-2 font-semibold bg-purple-500 text-white rounded-lg hover:bg-purple-600 active:bg-purple-700 transition-colors flex items-center gap-2 shadow-md hover:shadow-lg">
+                  <button
+                    onClick={() => handleRenew(book.id)}
+                    disabled={renewingId === book.id}
+                    className={`px-4 py-2 font-semibold rounded-lg transition-colors flex items-center gap-2 shadow-md ${
+                      renewingId === book.id
+                        ? 'bg-purple-400 text-white opacity-75 cursor-not-allowed'
+                        : 'bg-purple-500 text-white hover:bg-purple-600 active:bg-purple-700 hover:shadow-lg'
+                    }`}
+                  >
                     <Zap className="w-5 h-5" />
-                    Renew
+                    {renewingId === book.id ? 'Renewing...' : 'Renew'}
                   </button>
                 </div>
               </div>

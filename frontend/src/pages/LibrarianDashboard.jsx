@@ -21,6 +21,7 @@ import {
   Legend
 } from 'recharts';
 import * as dashboardService from '../services/dashboardService';
+import borrowingService from '../services/borrowingService';
 
 
 const LibrarianDashboard = () => {
@@ -51,24 +52,30 @@ const LibrarianDashboard = () => {
       dashboardService.getCollectionGrowth(7),
       dashboardService.getOverdueBooks(),
       dashboardService.getMemberStats(),
+      borrowingService.getPendingRequests(1, 100),
     ])
-      .then(([overviewData, categories, activity, growth, overdueBooks, memberStats]) => {
+      .then(([overviewData, categories, activity, growth, overdueBooks, memberStats, pendingRequests]) => {
         console.log('Dashboard data received:', { overviewData, categories, activity, growth, overdueBooks });
         
         setOverview(overviewData || {});
+        const overdueArray = Array.isArray(overdueBooks) ? overdueBooks : overdueBooks?.overdueBooks || [];
+        const pendingArray = Array.isArray(pendingRequests?.records) ? pendingRequests.records : [];
+        
         setStats([
           { label: 'Total Books', value: overviewData?.total_books?.toLocaleString() ?? '0', icon: BookOpen, color: 'text-sky-600', bg: 'bg-sky-50' },
           { label: 'Active Members', value: overviewData?.total_members?.toLocaleString() ?? '0', icon: Users, color: 'text-accent-600', bg: 'bg-accent-50' },
-          { label: 'Pending Returns', value: overdueBooks?.overdueBooks?.length ?? '0', icon: AlertCircle, color: 'text-amber-600', bg: 'bg-amber-50' },
+          { label: 'Pending Returns', value: (overdueArray?.length ?? 0).toLocaleString(), icon: AlertCircle, color: 'text-amber-600', bg: 'bg-amber-50' },
           { label: 'Monthly Growth', value: overviewData?.monthlyGrowth !== undefined ? `+${overviewData.monthlyGrowth}%` : '+0%', icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-          // { label: 'Active Categories', value: overviewData?.total_categories?.toLocaleString() ?? '0', icon: Database, color: 'text-blue-600', bg: 'bg-blue-50' },
         ]);
-        setCategoryData(categories?.stats?.map(cat => ({ name: cat.category_name, value: cat.total_books })) ?? []);
+        // Extract category stats (handle nested structure)
+        const catStats = categories?.stats || categories || [];
+        setCategoryData(Array.isArray(catStats) ? catStats.map(cat => ({ name: cat.category_name, value: cat.total_books })) : []);
         
-        // Process borrowing activity data - returns array with date, checkouts, unique_users
+        // Process borrowing activity data - handle nested structure (activity.activity)
         let trends = [];
-        if (Array.isArray(activity) && activity.length > 0) {
-          trends = activity.map(item => ({
+        const activityArray = Array.isArray(activity) ? activity : activity?.activity || [];
+        if (activityArray.length > 0) {
+          trends = activityArray.map(item => ({
             name: new Date(item.date).toLocaleDateString('default', { month: 'short', day: 'numeric' }),
             borrows: parseInt(item.checkouts) || 0
           })).reverse(); // Reverse to show chronological order
@@ -87,10 +94,11 @@ const LibrarianDashboard = () => {
         }
         setChartData(trends);
         
-        // Process collection growth data - returns array with month, books_added
+        // Process collection growth data - handle nested structure (growth.growth)
         let revenueChartData = [];
-        if (Array.isArray(growth) && growth.length > 0) {
-          revenueChartData = growth.map(item => ({
+        const growthArray = Array.isArray(growth) ? growth : growth?.growth || [];
+        if (growthArray.length > 0) {
+          revenueChartData = growthArray.map(item => ({
             month: item.month,
             books_added: parseInt(item.books_added) || 0
           })).reverse(); // Reverse for chronological order
