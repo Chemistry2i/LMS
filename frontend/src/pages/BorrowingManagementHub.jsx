@@ -52,36 +52,37 @@ const OverviewContent = () => {
 
   return (
     <div className="p-8">
+      <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">Borrowing System Overview</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <StatCard
           icon={<BookMarked className="w-8 h-8" />}
           label="Active Borrowings"
-          value={stats?.activeBorrowings || 0}
+          value={(stats?.activeBorrowings || 0).toLocaleString()}
           color="bg-sky-500"
         />
         <StatCard
           icon={<AlertCircle className="w-8 h-8" />}
           label="Overdue Items"
-          value={stats?.overdueItems || 0}
+          value={(stats?.overdueItems || 0).toLocaleString()}
           color="bg-red-500"
         />
         <StatCard
           icon={<Clock className="w-8 h-8" />}
           label="Pending Requests"
-          value={stats?.pendingRequests || 0}
+          value={(stats?.pendingRequests || 0).toLocaleString()}
           color="bg-yellow-500"
         />
         <StatCard
           icon={<DollarSign className="w-8 h-8" />}
           label="Outstanding Fines"
-          value={`$${(parseFloat(stats?.pendingFines) || 0).toFixed(2)}`}
+          value={`Shs ${(parseFloat(stats?.pendingFines) || 0).toLocaleString('en-US', { maximumFractionDigits: 0 })}`}
           color="bg-orange-500"
         />
       </div>
 
       <button
         onClick={fetchStats}
-        className="flex items-center gap-2 px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors"
+        className="flex items-center gap-2 px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors font-semibold"
       >
         <RefreshCw className="w-4 h-4" />
         Refresh Stats

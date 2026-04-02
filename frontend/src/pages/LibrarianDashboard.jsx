@@ -53,6 +53,8 @@ const LibrarianDashboard = () => {
       dashboardService.getMemberStats(),
     ])
       .then(([overviewData, categories, activity, growth, overdueBooks, memberStats]) => {
+        console.log('Dashboard data received:', { overviewData, categories, activity, growth, overdueBooks });
+        
         setOverview(overviewData || {});
         setStats([
           { label: 'Total Books', value: overviewData?.total_books?.toLocaleString() ?? '0', icon: BookOpen, color: 'text-sky-600', bg: 'bg-sky-50' },
@@ -62,19 +64,39 @@ const LibrarianDashboard = () => {
           // { label: 'Active Categories', value: overviewData?.total_categories?.toLocaleString() ?? '0', icon: Database, color: 'text-blue-600', bg: 'bg-blue-50' },
         ]);
         setCategoryData(categories?.stats?.map(cat => ({ name: cat.category_name, value: cat.total_books })) ?? []);
-        // Borrowing trends: fallback to flat zero if no data
-        let trends = activity?.activity?.map(item => ({ name: item.month || item.date, borrows: item.count })) ?? [];
+        
+        // Process borrowing activity data - returns array with date, checkouts, unique_users
+        let trends = [];
+        if (Array.isArray(activity) && activity.length > 0) {
+          trends = activity.map(item => ({
+            name: new Date(item.date).toLocaleDateString('default', { month: 'short', day: 'numeric' }),
+            borrows: parseInt(item.checkouts) || 0
+          })).reverse(); // Reverse to show chronological order
+          console.log('Processed trends:', trends);
+        }
+        
         if (!trends.length) {
-          // Generate last 6 months as fallback
+          // Generate last 7 days as fallback
           const now = new Date();
-          trends = Array.from({ length: 6 }).map((_, i) => {
-            const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1);
-            const label = d.toLocaleString('default', { month: 'short' });
+          trends = Array.from({ length: 7 }).map((_, i) => {
+            const d = new Date(now);
+            d.setDate(d.getDate() - (6 - i));
+            const label = d.toLocaleDateString('default', { month: 'short', day: 'numeric' });
             return { name: label, borrows: 0 };
           });
         }
         setChartData(trends);
-        setRevenueData(growth?.growth ?? []);
+        
+        // Process collection growth data - returns array with month, books_added
+        let revenueChartData = [];
+        if (Array.isArray(growth) && growth.length > 0) {
+          revenueChartData = growth.map(item => ({
+            month: item.month,
+            books_added: parseInt(item.books_added) || 0
+          })).reverse(); // Reverse for chronological order
+          console.log('Processed revenue data:', revenueChartData);
+        }
+        setRevenueData(revenueChartData);
       })
       .catch((err) => {
         setError('Failed to load dashboard data');
