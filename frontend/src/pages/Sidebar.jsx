@@ -85,13 +85,7 @@ const Sidebar = () => {
     { icon: Mail, label: 'Send Notifications', path: '/send-notifications', section: 'members' },
     
     // ============ BORROWING & RETURNS ============
-    { icon: BarChart3, label: 'Borrowing Overview', path: '/borrowing-overview', section: 'borrowing' },
-    { icon: BookMarked, label: 'Active Borrowings', path: '/active-borrowings', section: 'borrowing' },
-    { icon: AlertCircle, label: 'Overdue Items', path: '/overdue-management', section: 'borrowing', color: 'text-red-600', badge: '12' },
-    { icon: Clock, label: 'Due Soon', path: '/due-soon', section: 'borrowing' },
-    { icon: History, label: 'Borrowing History', path: '/borrowing-history', section: 'borrowing' },
-    { icon: CheckCircle2, label: 'Process Return', path: '/process-return', section: 'borrowing' },
-    { icon: Zap, label: 'Renew Books', path: '/renew-books', section: 'borrowing' },
+    { icon: BookMarked, label: 'Borrowing Management', path: '/borrowing-management', section: 'borrowing' },
     
     // ============ RESERVATIONS ============
     { icon: Bookmark, label: 'All Reservations', path: '/reservations', section: 'reservations' },
@@ -125,8 +119,7 @@ const Sidebar = () => {
     { icon: Users, label: 'Members', path: '/manage-users' },
     { icon: BookOpen, label: 'Books', path: '/books-library'},
     { icon: Database, label: 'Categories', path: '/manage-categories' },
-    { icon: BookMarked, label: 'Borrowings', path: '/' },
-    // { icon: History, label: 'Borrowing History', path: '/borrowing-history' },
+    { icon: BookMarked, label: 'Borrowing Management', path: '/borrowing-management', section: 'borrowing' },
     { icon: BarChart3, label: 'Analytics & Reports', path: '/reports' },
     { icon: HelpCircle, label: 'Help & FAQ', path: '/faq' },
   ];

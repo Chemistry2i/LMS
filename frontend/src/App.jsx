@@ -49,6 +49,7 @@ import DueSoonPage from './pages/Borrowings/DueSoonPage';
 import ProcessReturnPage from './pages/Borrowings/ProcessReturnPage';
 import RenewBooksPage from './pages/Borrowings/RenewBooksPage';
 import BorrowingOverview from './pages/BorrowingOverview';
+import BorrowingManagementHub from './pages/BorrowingManagementHub';
 
 // Fine Pages
 import FineManagementPage from './pages/Fines/FineManagementPage';
@@ -136,6 +137,7 @@ function App() {
             
             {/* Borrowing Management Routes */}
             <Route path="/borrowing" element={<ProtectedRoute><BorrowingDashboard /></ProtectedRoute>} />
+            <Route path="/borrowing-management" element={<ProtectedRoute roles={['librarian']}><BorrowingManagementHub /></ProtectedRoute>} />
             <Route path="/admin/borrowing" element={<ProtectedRoute roles={['librarian']}><AdminBorrowingManagement /></ProtectedRoute>} />
             <Route path="/borrowing-overview" element={<ProtectedRoute roles={['librarian']}><BorrowingOverview /></ProtectedRoute>} />
             
