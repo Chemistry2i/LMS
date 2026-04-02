@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import toast from 'react-hot-toast';
-import { User, Mail, Lock, ArrowRight, BookOpen, Sun, Moon } from 'lucide-react';
+import { User, Mail, Lock, ArrowRight, BookOpen, Sun, Moon, Eye, EyeOff } from 'lucide-react';
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -14,6 +14,7 @@ const RegisterPage = () => {
     last_name: '',
   });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { register } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const navigate = useNavigate();
@@ -140,14 +141,22 @@ const RegisterPage = () => {
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
                   <input
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="••••••••"
-                    className="input-base pl-10"
+                    className="input-base pl-10 pr-10"
                     required
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                    title={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
                 </div>
                 <p className="text-xs text-muted mt-1">At least 6 characters</p>
               </div>
