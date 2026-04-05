@@ -219,26 +219,30 @@ const BorrowingDetailsSection = () => {
           <h3 className="font-bold text-lg mb-6 text-slate-900 dark:text-white">
             6-Month Borrowing Trends
           </h3>
-          <div className="h-[300px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={trendData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12 }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12 }} />
-                <Tooltip
-                  contentStyle={{
-                    borderRadius: '12px',
-                    border: 'none',
-                    boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'
-                  }}
-                  cursor={{ fill: '#f8fafc' }}
-                />
-                <Legend />
-                <Bar dataKey="pending" fill="#f59e0b" radius={[6, 6, 0, 0]} />
-                <Bar dataKey="active" fill="#3b82f6" radius={[6, 6, 0, 0]} />
-                <Bar dataKey="returned" fill="#10b981" radius={[6, 6, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+          <div className="w-full" style={{ minHeight: '300px', height: '300px', position: 'relative' }}>
+            {trendData && trendData.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={trendData}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12 }} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12 }} />
+                  <Tooltip
+                    contentStyle={{
+                      borderRadius: '12px',
+                      border: 'none',
+                      boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'
+                    }}
+                    cursor={{ fill: '#f8fafc' }}
+                  />
+                  <Legend />
+                  <Bar dataKey="pending" fill="#f59e0b" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="active" fill="#3b82f6" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="returned" fill="#10b981" radius={[6, 6, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-full text-slate-500">Loading chart...</div>
+            )}
           </div>
         </motion.div>
 

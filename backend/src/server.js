@@ -53,6 +53,9 @@ app.use(express.urlencoded({ extended: true }));
 // Serve uploaded book files and covers statically
 app.use('/uploads/books', express.static(path.join(__dirname, '../uploads/books')));
 
+// Serve profile images statically
+app.use('/uploads/profile-images', express.static(path.join(__dirname, '../uploads/profile-images')));
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/books', bookRoutes);

@@ -313,7 +313,7 @@ const LibrarianDashboard = () => {
           <div className="lg:col-span-2 card bg-white dark:bg-slate-900 p-6">
             <h3 className="font-bold text-lg mb-8 text-slate-900 dark:text-white">Monthly Borrowing Trends</h3>
             {chartData && chartData.length > 0 ? (
-              <div className="h-[300px] w-full">
+              <div className="w-full" style={{ minHeight: '300px', height: '300px', position: 'relative' }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
@@ -381,7 +381,7 @@ const LibrarianDashboard = () => {
               </div>
             </div>
             {revenueData && revenueData.length > 0 ? (
-              <div className="h-[300px] w-full">
+              <div className="w-full" style={{ minHeight: '300px', height: '300px', position: 'relative' }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={revenueData}>
                     <defs>
