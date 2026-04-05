@@ -34,12 +34,30 @@ class UserService {
   }
 
   static async uploadProfileImage(userId, imageUrl) {
-    const user = await UserModel.findById(userId);
-    if (!user) {
-      throw new NotFoundError('User not found');
+    try {
+      console.log('UserService.uploadProfileImage called:', { userId, imageUrl });
+      
+      const user = await UserModel.findById(userId);
+      console.log('User found in DB:', user);
+      
+      if (!user) {
+        console.warn('User not found by userId:', userId);
+        throw new NotFoundError('User not found');
+      }
+      
+      console.log('Calling UserModel.updateProfileImage...');
+      const updatedUser = await UserModel.updateProfileImage(userId, imageUrl);
+      console.log('UserModel.updateProfileImage returned:', updatedUser);
+      
+      return updatedUser;
+    } catch (error) {
+      console.error('UserService.uploadProfileImage error:', {
+        message: error.message,
+        type: error.constructor.name,
+        stack: error.stack
+      });
+      throw error;
     }
-    const updatedUser = await UserModel.updateProfileImage(userId, imageUrl);
-    return updatedUser;
   }
 }
 

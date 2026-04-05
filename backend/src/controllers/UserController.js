@@ -82,13 +82,21 @@ class UserController {
       }
 
       console.log('Profile image uploaded successfully for userId:', userId);
+      console.log('Sending response with user:', updatedUser);
+      console.log('Sending imageUrl:', imageUrl);
       
+      console.log('Before sending success response');
       sendSuccess(res, 'Profile image uploaded successfully', { 
         user: updatedUser,
         imageUrl 
       });
+      console.log('After sending success response');
     } catch (error) {
-      console.error('Upload profile image error:', error);
+      console.error('Upload profile image error:', {
+        message: error.message,
+        stack: error.stack,
+        code: error.code
+      });
       next(error);
     }
   }

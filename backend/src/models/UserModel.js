@@ -75,13 +75,32 @@ class UserModel {
 
   static async updateProfileImage(userId, imageUrl) {
     try {
-      await pool.query(
+      console.log('UserModel.updateProfileImage called with:', { userId, imageUrl });
+      
+      const [result] = await pool.query(
         'UPDATE users SET profile_image_url = ? WHERE user_id = ?',
         [imageUrl, userId]
       );
+      
+      console.log('UPDATE query result:', result);
+      console.log('Affected rows:', result.affectedRows);
+      
+      if (result.affectedRows === 0) {
+        console.warn('Update affected 0 rows - user might not exist:', userId);
+      }
+      
       const updatedUser = await this.findById(userId);
+      console.log('Updated user returned:', updatedUser);
+      
       return updatedUser;
     } catch (error) {
+      console.error('UserModel.updateProfileImage error:', {
+        message: error.message,
+        code: error.code,
+        errno: error.errno,
+        sqlMessage: error.sqlMessage,
+        stack: error.stack
+      });
       throw new DatabaseError(error.message);
     }
   }
