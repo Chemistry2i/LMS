@@ -1,6 +1,7 @@
 const UserService = require('../services/UserService');
 const { sendSuccess, sendPaginated } = require('../utils/response');
 const { DEFAULT_PAGE, DEFAULT_LIMIT } = require('../constants/appConstants');
+const config = require('../config/config');
 
 class UserController {
   static async deleteUser(req, res, next) {
@@ -67,7 +68,7 @@ class UserController {
       }
 
       const userId = req.user.user_id;
-      const imageUrl = `/uploads/profile-images/${req.file.filename}`;
+      const imageUrl = `${config.API_URL}/uploads/profile-images/${req.file.filename}`;
 
       console.log('Uploading image for userId:', userId);
       console.log('Image filename:', req.file.filename);
