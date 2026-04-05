@@ -32,6 +32,15 @@ class UserService {
     await UserModel.update(userId, updateData);
     return true;
   }
+
+  static async uploadProfileImage(userId, imageUrl) {
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      throw new NotFoundError('User not found');
+    }
+    const updatedUser = await UserModel.updateProfileImage(userId, imageUrl);
+    return updatedUser;
+  }
 }
 
 module.exports = UserService;

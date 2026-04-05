@@ -49,6 +49,27 @@ class UserController {
       next(error);
     }
   }
+
+  static async uploadProfileImage(req, res, next) {
+    try {
+      if (!req.file) {
+        return sendSuccess(res, 'No file uploaded', null, 400);
+      }
+
+      // Generate image URL based on file location
+      const imageUrl = `/uploads/profile-images/${req.file.filename}`;
+      
+      // Update user profile with image URL
+      const updatedUser = await UserService.uploadProfileImage(req.user.userId, imageUrl);
+      
+      sendSuccess(res, 'Profile image uploaded successfully', { 
+        user: updatedUser,
+        imageUrl 
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = UserController;

@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Mail, User, Phone, MapPin, Calendar, Edit2, Save, X } from 'lucide-react';
+import { Mail, User, Phone, MapPin, Calendar, Edit2, Save, X, Camera, Loader } from 'lucide-react';
 import MainLayout from './MainLayout';
 import WelcomeBanner from '../components/WelcomeBanner';
 
 const ProfilePage = () => {
   const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [profileImageUrl, setProfileImageUrl] = useState(user?.profile_image_url);
+  const fileInputRef = useRef(null);
   const [formData, setFormData] = useState({
     first_name: user?.first_name || '',
     last_name: user?.last_name || '',

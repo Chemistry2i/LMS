@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 // import img from "../"
 import { 
@@ -45,13 +45,18 @@ import {
   Navigation,
   Zap,
   Shield,
-  Mail
+  Mail,
+  Camera,
+  Loader
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Sidebar = () => {
   const { user } = useAuth();
   const isLibrarian = user?.role === 'librarian';
+  const [isUploading, setIsUploading] = useState(false);
+  const [profileImageUrl, setProfileImageUrl] = useState(user?.profile_image_url);
+  const fileInputRef = useRef(null);
 
   // Comprehensive Librarian Menu - Organized by Major Functions
   const librarianItems = [
@@ -126,6 +131,64 @@ const Sidebar = () => {
 
   const { logout } = useAuth();
   const navigate = useNavigate();
+
+  // Handle avatar click - trigger file input
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  // Handle file selection and upload
+  const handleFileChange = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      alert('Please select a valid image file (JPEG, PNG, GIF, or WebP)');
+      return;
+    }
+
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('File size must be less than 5MB');
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('profileImage', file);
+
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/users/profile/image', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to upload image');
+      }
+
+      // Update local state with new image URL
+      setProfileImageUrl(data.data.imageUrl);
+      alert('Profile image updated successfully!');
+    } catch (error) {
+      console.error('Image upload error:', error);
+      alert(`Error uploading image: ${error.message}`);
+    } finally {
+      setIsUploading(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
   return (
     <aside className="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 h-screen fixed left-0 top-0 z-40 hidden lg:flex flex-col">
       <div className="p-6">
@@ -140,13 +203,48 @@ const Sidebar = () => {
       {/* Profile Section - Top */}
       <div className="px-4 py-4">
         <div className="flex flex-col items-center text-center p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700">
-          {/* Avatar */}
-          <div className="relative mb-3">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center text-white font-bold text-2xl">
-              {user?.username?.[0].toUpperCase()}
+          {/* Avatar - Clickable Image Upload */}
+          <div className="relative mb-3 group">
+            {profileImageUrl ? (
+              <img
+                src={profileImageUrl}
+                alt={user?.username}
+                onClick={handleAvatarClick}
+                disabled={isUploading}
+                className="w-16 h-16 rounded-full bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center text-white font-bold text-2xl object-cover cursor-pointer hover:opacity-80 transition-opacity border-2 border-sky-300"
+              />
+            ) : (
+              <div
+                onClick={handleAvatarClick}
+                className="w-16 h-16 rounded-full bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center text-white font-bold text-2xl cursor-pointer hover:opacity-80 transition-opacity"
+              >
+                {user?.username?.[0].toUpperCase()}
+              </div>
+            )}
+            
+            {/* Camera Icon Overlay */}
+            <div className="absolute bottom-0 right-0 bg-sky-600 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
+              {isUploading ? (
+                <Loader className="w-4 h-4 animate-spin" />
+              ) : (
+                <Camera className="w-4 h-4" />
+              )}
             </div>
+
+            {/* Online Status Dot */}
             <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 rounded-full border-2 border-white dark:border-slate-800"></div>
           </div>
+
+          {/* Hidden File Input */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/gif,image/webp"
+            onChange={handleFileChange}
+            disabled={isUploading}
+            className="hidden"
+            aria-label="Upload profile image"
+          />
 
           {/* Username */}
           <p className="text-sm font-bold text-slate-900 dark:text-white mb-2 line-clamp-2">{user?.username}</p>
@@ -161,8 +259,11 @@ const Sidebar = () => {
               : 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300'
           }`}>
             <span className={`w-1.5 h-1.5 rounded-full ${isLibrarian ? 'bg-blue-500' : 'bg-emerald-500'}`}></span>
-            {isLibrarian ? 'Librarian' : 'Member'}
+            {isLibrarian ? 'Librarian' : 'Admin'}
           </span>
+
+          {/* Upload Hint */}
+          <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-2">Click avatar to change</p>
         </div>
       </div>
 

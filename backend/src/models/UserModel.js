@@ -16,7 +16,7 @@ class UserModel {
   static async findById(userId) {
     try {
       const [rows] = await pool.query(
-        'SELECT user_id, username, email, first_name, last_name, role FROM users WHERE user_id = ?',
+        'SELECT user_id, username, email, first_name, last_name, role, profile_image_url FROM users WHERE user_id = ?',
         [userId]
       );
       return rows.length > 0 ? rows[0] : null;
@@ -50,7 +50,7 @@ class UserModel {
   static async getAll(limit, offset) {
     try {
       const [rows] = await pool.query(
-        'SELECT user_id, username, email, first_name, last_name, role, created_at FROM users LIMIT ? OFFSET ?',
+        'SELECT user_id, username, email, first_name, last_name, role, profile_image_url, created_at FROM users LIMIT ? OFFSET ?',
         [limit, offset]
       );
       const [count] = await pool.query('SELECT COUNT(*) as total FROM users');
@@ -68,6 +68,19 @@ class UserModel {
         [first_name, last_name, phone, address, userId]
       );
       return true;
+    } catch (error) {
+      throw new DatabaseError(error.message);
+    }
+  }
+
+  static async updateProfileImage(userId, imageUrl) {
+    try {
+      await pool.query(
+        'UPDATE users SET profile_image_url = ? WHERE user_id = ?',
+        [imageUrl, userId]
+      );
+      const updatedUser = await this.findById(userId);
+      return updatedUser;
     } catch (error) {
       throw new DatabaseError(error.message);
     }
