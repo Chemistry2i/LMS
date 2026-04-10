@@ -154,12 +154,6 @@ const ManageCategories = () => {
                   </div>
                 </motion.div>
               ))}
-              <CategoryModal
-                open={modalOpen}
-                onClose={() => setModalOpen(false)}
-                onSubmit={handleAddCategory}
-                loading={loading}
-              />
             </AnimatePresence>
             {/* Quick Add Placeholder */}
             <button className="card border-2 border-dashed border-slate-200 dark:border-slate-800 bg-transparent flex flex-col items-center justify-center gap-3 group hover:border-sky-400 transition-smooth min-h-[240px]">
@@ -170,6 +164,14 @@ const ManageCategories = () => {
             </button>
           </div>
         )}
+
+        {/* Modal - Rendered at root level, always available */}
+        <CategoryModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onSubmit={handleAddCategory}
+          loading={loading}
+        />
       </div>
     </MainLayout>
   );
