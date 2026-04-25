@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+// Ensure backend asset URL is available
+const ASSET_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
 import { Plus, Edit2, Trash2, Eye, Download, ChevronDown } from 'lucide-react';
 import DataTable from '../../components/DataTable/DataTable';
 import AddBookModal from './AddBookModal';
@@ -30,6 +32,8 @@ const BooksPageContent = () => {
           copies: b.total_copies,
           available: b.available_copies,
           status: b.available_copies === 0 ? 'unavailable' : (b.available_copies < 2 ? 'low-stock' : 'available'),
+          cover_url: b.cover_url ? (b.cover_url.startsWith('http') ? b.cover_url : `${ASSET_URL}${b.cover_url}`) : null,
+          file_url: b.book_file_url ? (b.book_file_url.startsWith('http') ? b.book_file_url : `${ASSET_URL}${b.book_file_url}`) : null
         }));
         setBooks(mappedBooks);
         setDeleteTarget(null);
@@ -98,6 +102,8 @@ const BooksPageContent = () => {
         copies: b.total_copies,
         available: b.available_copies,
         status: b.available_copies === 0 ? 'unavailable' : (b.available_copies < 2 ? 'low-stock' : 'available'),
+        cover_url: b.cover_url ? (b.cover_url.startsWith('http') ? b.cover_url : `${ASSET_URL}${b.cover_url}`) : null,
+        file_url: b.book_file_url ? (b.book_file_url.startsWith('http') ? b.book_file_url : `${ASSET_URL}${b.book_file_url}`) : null
       }));
       setBooks(mappedBooks);
       setIsAddModalOpen(false);

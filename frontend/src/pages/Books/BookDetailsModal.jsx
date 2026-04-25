@@ -1,6 +1,7 @@
 
 
 import React from 'react';
+const ASSET_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
 import BaseModal from '../../components/Modals/BaseModal';
 
 const BookDetailsModal = ({ isOpen, onClose, book }) => {
@@ -8,8 +9,8 @@ const BookDetailsModal = ({ isOpen, onClose, book }) => {
 
   // Use cover_url as in BookCard, fallback to a placeholder if needed
   let coverUrl = book.cover_url;
-  if (coverUrl && !coverUrl.startsWith('http') && !coverUrl.startsWith('/uploads')) {
-    coverUrl = `/uploads/books/${coverUrl}`;
+  if (coverUrl && !coverUrl.startsWith('http')) {
+    coverUrl = `${ASSET_URL}${coverUrl}`;
   }
 
   // Mock rating for demonstration (could be replaced with book.rating)

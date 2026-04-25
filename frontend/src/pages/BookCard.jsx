@@ -1,4 +1,5 @@
 import React from 'react';
+const ASSET_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
 import { Book, User, Info, ArrowRight, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -19,9 +20,9 @@ const BookCard = ({ book }) => {
     <div className="card group hover:shadow-xl hover:-translate-y-1 transition-smooth flex flex-col h-full border-slate-100 dark:border-slate-800">
       <div className="aspect-[16/10] rounded-lg bg-slate-100 dark:bg-slate-800 relative mb-3 overflow-hidden flex items-center justify-center">
         {book.cover_url ? (
-          <img 
-            src={book.cover_url} 
-            alt={book.title} 
+          <img
+            src={book.cover_url.startsWith('http') ? book.cover_url : `${ASSET_URL}${book.cover_url}`}
+            alt={book.title}
             className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
             onError={(e) => { e.target.src = 'https://via.placeholder.com/400x250?text=No+Cover'; }}
           />
