@@ -18,24 +18,30 @@ const BookCard = ({ book }) => {
 
   return (
     <div className="card group hover:shadow-xl hover:-translate-y-1 transition-smooth flex flex-col h-full border-slate-100 dark:border-slate-800">
-      <div className="aspect-[16/10] rounded-lg bg-slate-100 dark:bg-slate-800 relative mb-3 overflow-hidden flex items-center justify-center">
-        {book.cover_url ? (
-          <img
-            src={book.cover_url.startsWith('http') ? book.cover_url : `${ASSET_URL}${book.cover_url}`}
-            alt={book.title}
-            className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
-            onError={(e) => { e.target.src = 'https://via.placeholder.com/400x250?text=No+Cover'; }}
-          />
-        ) : (
-          <Book className="w-12 h-12 text-slate-300 dark:text-slate-600" />
-        )}
-        <span className={`absolute top-2 right-2 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${statusColors[book.status.toLowerCase()] || statusColors.available}`}>
-          {book.status}
-        </span>
-      </div>
+      <Link to={`/books/${book.id}`} className="block">
+        <div className="aspect-[16/10] rounded-lg bg-slate-100 dark:bg-slate-800 relative mb-3 overflow-hidden flex items-center justify-center">
+          {book.cover_url ? (
+            <img
+              src={book.cover_url.startsWith('http') ? book.cover_url : `${ASSET_URL}${book.cover_url}`}
+              alt={book.title}
+              className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
+              onError={(e) => { e.target.src = 'https://via.placeholder.com/400x250?text=No+Cover'; }}
+            />
+          ) : (
+            <Book className="w-12 h-12 text-slate-300 dark:text-slate-600" />
+          )}
+          <span className={`absolute top-2 right-2 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${statusColors[book.status.toLowerCase()] || statusColors.available}`}>
+            {book.status}
+          </span>
+        </div>
+      </Link>
 
       <div className="flex-1">
-        <h3 className="font-bold text-slate-900 dark:text-white group-hover:text-sky-600 transition-smooth line-clamp-1">{book.title}</h3>
+        <Link to={`/books/${book.id}`}>
+          <h3 className="font-bold text-slate-900 dark:text-white group-hover:text-sky-600 transition-smooth line-clamp-1">
+            {book.title}
+          </h3>
+        </Link>
         <div className="flex items-center gap-1.5 text-xs text-muted mt-1">
           <User className="w-3 h-3" />
           <span className="line-clamp-1">{book.author}</span>

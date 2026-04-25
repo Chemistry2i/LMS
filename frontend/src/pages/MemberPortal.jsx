@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { 
   Search, 
   Filter,
@@ -18,6 +19,7 @@ import { getCategories } from '../services/categoryService';
 const ASSET_URL = import.meta.env.VITE_API_URL?.replace(/\/api$/, '') || 'http://localhost:5000';
 
 const MemberPortal = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [activeFilter, setActiveCategory] = useState('All');
@@ -281,10 +283,7 @@ const MemberPortal = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.2 }}
-                  onClick={() => {
-                    setSelectedBook(book);
-                    setShowModal(true);
-                  }}
+                  onClick={() => navigate(`/books/${book.id}`)}
                   className="cursor-pointer"
                 >
                   <BookCard book={book} />
