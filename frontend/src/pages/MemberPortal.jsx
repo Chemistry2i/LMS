@@ -48,18 +48,39 @@ const MemberPortal = () => {
         const catMap = {};
         categoriesData.forEach(c => catMap[c.category_id] = c.category_name);
 
-        const mappedBooks = booksData.map(b => ({
-          id: b.book_id,
-          title: b.title,
-          author: b.author,
-          category: catMap[b.category_id] || 'Uncategorized',
-          status: b.available_copies > 0 ? 'available' : 'borrowed',
-          fine_per_day: 500, 
-          createdAt: b.created_at,
-          cover_url: b.cover_url ? `${ASSET_URL}${b.cover_url}` : null,
-          description: b.description,
-          file_url: b.book_file_url ? `${ASSET_URL}${b.book_file_url}` : null
-        }));
+        const mappedBooks = booksData.map(b => {
+          const formatUrl = (url, title, isDownload = false) => {
+            if (!url) return null;
+            let finalUrl = url.startsWith('http') ? url : `${ASSET_URL}${url}`;
+            
+            // Loophole Fix: Cloudinary transformations (fl_attachment) do NOT work for 'raw' files.
+            // Documents (Word, Excel, etc.) are 'raw', so we skip the transformation to avoid 400 errors.
+            if (isDownload && finalUrl.includes('/raw/upload/')) return finalUrl;
+
+            if (isDownload && finalUrl.includes('cloudinary.com') && finalUrl.includes('/upload/')) {
+              // Extract extension from the last part of path only to avoid domain issues
+              const fileName = finalUrl.split('/').pop().split(/[?#]/)[0];
+              const extension = fileName.includes('.') ? fileName.split('.').pop() : 'pdf';
+              // Sanitize title: keep only alphanumeric and underscores for the URL transformation
+              const safeName = title ? title.replace(/[^a-z0-9]/gi, '_') : 'document';
+              finalUrl = finalUrl.replace('/upload/', `/upload/fl_attachment:${safeName}.${extension}/`);
+            }
+            return finalUrl;
+          };
+
+          return {
+            id: b.book_id,
+            title: b.title,
+            author: b.author,
+            category: catMap[b.category_id] || 'Uncategorized',
+            status: b.available_copies > 0 ? 'available' : 'borrowed',
+            fine_per_day: 500, 
+            createdAt: b.created_at,
+            cover_url: formatUrl(b.cover_url, b.title, false),
+            description: b.description,
+            file_url: formatUrl(b.book_file_url, b.title, true)
+          };
+        });
 
         setBooks(mappedBooks);
       } catch (err) {
@@ -312,7 +333,7 @@ const MemberPortal = () => {
                     href={selectedBook.file_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    download
+                    download={selectedBook.title}
                     className="px-6 py-2 rounded-full font-bold text-xs bg-emerald-600 text-white hover:bg-emerald-700 transition-all flex items-center gap-2"
                   >
                     <Download className="w-4 h-4" /> Download

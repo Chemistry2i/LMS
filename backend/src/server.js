@@ -35,8 +35,8 @@ app.use(helmet({
 // CORS Configuration
 const corsOptions = {
   origin: [
-    'https://campusvault.app',
-    'https://api.campusvault.app',
+    // 'https://campusvault.app',
+    // 'https://api.campusvault.app',
     'http://localhost:5173',
     'http://localhost:3000'
   ],
@@ -51,11 +51,9 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve uploaded book files and covers statically
-app.use('/uploads/books', express.static(path.join(__dirname, '../uploads/books')));
-
-// Serve profile images statically
-app.use('/uploads/profile-images', express.static(path.join(__dirname, '../uploads/profile-images')));
+// Static file serving (no longer needed for uploads as they are on Cloudinary)
+// app.use('/uploads/books', express.static(path.join(__dirname, '../uploads/books')));
+// app.use('/uploads/profile-images', express.static(path.join(__dirname, '../uploads/profile-images')));
 
 // Routes
 app.use('/api/auth', authRoutes);

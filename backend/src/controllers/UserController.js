@@ -68,10 +68,10 @@ class UserController {
       }
 
       const userId = req.user.user_id;
-      const imageUrl = `${config.API_URL}/uploads/profile-images/${req.file.filename}`;
+      const imageUrl = req.file.path; // Use the secure URL provided by Cloudinary
 
       console.log('Uploading image for userId:', userId);
-      console.log('Image filename:', req.file.filename);
+      console.log('Image URL:', imageUrl);
       console.log('Image URL:', imageUrl);
 
       // Update user profile with image URL

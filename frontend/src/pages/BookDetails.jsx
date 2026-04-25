@@ -57,6 +57,24 @@ const BookDetails = () => {
           return;
         }
 
+        const formatUrl = (url, title, isDownload = false) => {
+          if (!url) return null;
+          let finalUrl = url.startsWith('http') ? url : `${ASSET_URL}${url}`;
+
+          // Loophole Fix: Skip transformations for 'raw' resources to prevent HTTP 400.
+          if (isDownload && finalUrl.includes('/raw/upload/')) return finalUrl;
+
+          if (isDownload && finalUrl.includes('cloudinary.com') && finalUrl.includes('/upload/')) {
+            // Extract extension from the last part of path only to avoid domain issues
+            const fileName = finalUrl.split('/').pop().split(/[?#]/)[0];
+            const extension = fileName.includes('.') ? fileName.split('.').pop() : 'pdf';
+            // Sanitize title for the URL transformation segment
+            const safeName = title ? title.replace(/[^a-z0-9]/gi, '_') : 'document';
+            finalUrl = finalUrl.replace('/upload/', `/upload/fl_attachment:${safeName}.${extension}/`);
+          }
+          return finalUrl;
+        };
+
         setBook({
           id: found.book_id,
           title: found.title,
@@ -69,8 +87,8 @@ const BookDetails = () => {
           published_year: found.publication_year || 'N/A',
           copies_available: found.available_copies,
           rating: 4.5, 
-          cover_url: found.cover_url ? `${ASSET_URL}${found.cover_url}` : null,
-          file_url: found.book_file_url ? `${ASSET_URL}${found.book_file_url}` : null
+          cover_url: formatUrl(found.cover_url, found.title, false),
+          file_url: formatUrl(found.book_file_url, found.title, true)
         });
       } catch (error) {
         toast.error("Failed to load book details");
@@ -81,6 +99,48 @@ const BookDetails = () => {
 
     fetchBookData();
   }, [id, navigate]);
+
+  // Share handler
+  const handleShare = () => {
+    const shareUrl = window.location.href;
+    const shareData = {
+      title: book?.title || 'Book',
+      text: `Check out this book: ${book?.title || ''}`,
+      url: shareUrl
+    };
+    if (navigator.share) {
+      navigator.share(shareData)
+        .then(() => {
+          toast.success('Link shared!');
+        })
+        .catch((err) => {
+          if (err.name !== 'AbortError') {
+            toast.error('Failed to share.');
+          }
+        });
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(shareUrl)
+        .then(() => {
+          toast.success('Link copied to clipboard!');
+        })
+        .catch(() => {
+          toast.error('Failed to copy link.');
+        });
+    } else {
+      // Fallback for very old browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = shareUrl;
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        toast.success('Link copied to clipboard!');
+      } catch {
+        toast.error('Failed to copy link.');
+      }
+      document.body.removeChild(textArea);
+    }
+  };
 
   const handleBorrow = () => {
     if (!user) {
@@ -113,7 +173,8 @@ const BookDetails = () => {
     }
   };
 
-  if (loading) {
+
+  if (loading || !book) {
     return (
       <MemberLayout>
         <div className="flex h-96 items-center justify-center">
@@ -133,11 +194,11 @@ const BookDetails = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Left: Book Cover Visual */}
           <div className="space-y-6">
-            <div className="aspect-[3/4] bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-800 flex items-center justify-center relative overflow-hidden group">
+            <div className="aspect-[3/5] min-h-[420px] bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-800 flex items-center justify-center relative overflow-hidden group">
               {book.cover_url ? (
-                <img 
-                  src={book.cover_url} 
-                  alt={book.title} 
+                <img
+                  src={book.cover_url}
+                  alt={book.title}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
               ) : (
@@ -151,7 +212,7 @@ const BookDetails = () => {
               <button className="flex-1 btn-outline flex items-center justify-center gap-2">
                 <BookmarkPlus className="w-4 h-4" /> Wishlist
               </button>
-              <button className="p-3 btn-outline">
+              <button className="p-3 btn-outline" onClick={handleShare} type="button">
                 <Share2 className="w-4 h-4" />
               </button>
             </div>
@@ -206,11 +267,11 @@ const BookDetails = () => {
                   href={book.file_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  download
+                  download={book.title}
                   className="px-12 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-bold shadow-xl shadow-emerald-200 dark:shadow-none transition-smooth flex items-center justify-center gap-3"
                 >
                   <Download className="w-6 h-6" />
-                  Download PDF
+                  Download Document
                 </a>
               )}
               <button 

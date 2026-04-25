@@ -3,20 +3,59 @@ const express = require('express');
 const router = express.Router();
 const BookController = require('../controllers/BookController');
 const multer = require('multer');
-const path = require('path');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
-// Multer setup for book uploads
-const storage = multer.diskStorage({
-	destination: (req, file, cb) => {
-		cb(null, path.join(__dirname, '../../uploads/books'));
-	},
-	filename: (req, file, cb) => {
-		const ext = path.extname(file.originalname);
-		const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9) + ext;
-		cb(null, uniqueName);
-	}
+// Cloudinary configuration
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
 });
-const upload = multer({ storage });
+
+// Verify Cloudinary connection on startup
+cloudinary.api.ping()
+  .then(() => {
+    console.log('✅ Cloudinary connected successfully (Book Assets)');
+  })
+  .catch((err) => {
+    console.error('❌ Cloudinary connection failed (Book Assets):', err.message);
+  });
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: async (req, file) => {
+    const isImage = file.mimetype.startsWith('image/');
+    return {
+      folder: 'lms_books',
+      // Use 'image' for covers, 'raw' for documents to ensure reliable downloads
+      resource_type: isImage ? 'image' : 'raw',
+      public_id: Date.now() + '-' + Math.round(Math.random() * 1E9)
+    };
+  },
+});
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // Example: 10MB limit for books
+  fileFilter: (req, file, cb) => {
+    const allowedMimes = [
+      'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+      'application/pdf',
+      'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      'text/plain', 'application/epub+zip'
+    ];
+    if (allowedMimes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type. Allowed: Images, PDF, Word, Excel, PowerPoint, Text, and EPUB.'));
+    }
+  }
+});
+
+
 // Minimal test route for multer file upload debugging
 router.post('/test-upload', upload.fields([
 	{ name: 'cover', maxCount: 1 },

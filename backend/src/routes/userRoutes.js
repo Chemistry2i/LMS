@@ -2,27 +2,35 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const UserController = require('../controllers/UserController');
 const { authenticate, authorize } = require('../middleware/auth');
 const { ROLES } = require('../constants/appConstants');
 
-// Ensure upload directory exists
-const uploadDir = path.join(__dirname, '../../uploads/profile-images');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
+// Cloudinary configuration (Reuse same credentials)
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
-// Configure multer for profile image uploads
-const profileImageStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDir);
+// Verify Cloudinary connection on startup
+cloudinary.api.ping()
+  .then(() => {
+    console.log('✅ Cloudinary connected successfully (User Profiles)');
+  })
+  .catch((err) => {
+    console.error('❌ Cloudinary connection failed (User Profiles):', err.message);
+  });
+
+const profileImageStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'lms_profiles',
+    allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
+    public_id: (req, file) => `user-${req.user?.user_id || 'anon'}-${Date.now()}`
   },
-  filename: (req, file, cb) => {
-    const userId = req.user?.userId || 'unknown';
-    const uniqueName = `${userId}-${Date.now()}${path.extname(file.originalname)}`;
-    cb(null, uniqueName);
-  }
 });
 
 const uploadProfileImage = multer({

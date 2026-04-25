@@ -17,9 +17,9 @@ const BookCard = ({ book }) => {
   const totalStars = 5;
 
   return (
-    <div className="card group hover:shadow-xl hover:-translate-y-1 transition-smooth flex flex-col h-full border-slate-100 dark:border-slate-800">
+    <div className="card group hover:shadow-xl hover:-translate-y-1 transition-smooth flex flex-col min-h-[420px] h-full border-slate-100 dark:border-slate-800">
       <Link to={`/books/${book.id}`} className="block">
-        <div className="aspect-[16/10] rounded-lg bg-slate-100 dark:bg-slate-800 relative mb-3 overflow-hidden flex items-center justify-center">
+        <div className="aspect-[3/4] min-h-[200px] rounded-lg bg-slate-100 dark:bg-slate-800 relative mb-3 overflow-hidden flex items-center justify-center">
           {book.cover_url ? (
             <img
               src={book.cover_url.startsWith('http') ? book.cover_url : `${ASSET_URL}${book.cover_url}`}

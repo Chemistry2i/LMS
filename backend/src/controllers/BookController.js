@@ -46,10 +46,10 @@ class BookController {
       };
 
       if (req.files?.cover) {
-        bookData.cover_url = `/uploads/books/${req.files.cover[0].filename}`;
+        bookData.cover_url = req.files.cover[0].path; // Cloudinary full URL
       }
       if (req.files?.book_file) {
-        bookData.book_file_url = `/uploads/books/${req.files.book_file[0].filename}`;
+        bookData.book_file_url = req.files.book_file[0].path; // Cloudinary full URL
       }
 
       const bookId = await BookService.createBook(bookData);

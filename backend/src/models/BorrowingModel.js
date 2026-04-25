@@ -81,7 +81,7 @@ class BorrowingModel {
     try {
       const [result] = await pool.query(
         `UPDATE borrowing_records 
-         SET approval_status = 'rejected', 
+         SET app/////////////////////////////////////////////////////////////////roval_status = 'rejected', 
              approved_by = ?,
              approval_date = NOW(),
              rejection_reason = ?,
